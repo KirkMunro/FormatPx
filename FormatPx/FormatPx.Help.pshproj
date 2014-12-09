@@ -1,0 +1,987 @@
+﻿<?xml version="1.0"?>
+<ModuleObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" fVersion="1.1" type="Script" mclass="Module" useSupports="false">
+  <Name>FormatPx</Name>
+  <Version>1.0.0.0</Version>
+  <Description>FormatPx separates the formatting layer from the data layer in PowerShell. By default, PowerShell's native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.</Description>
+  <HasManifest>true</HasManifest>
+  <OverridePostCount>false</OverridePostCount>
+  <FetchPostCount xsi:nil="true" />
+  <Cmdlets>
+    <CmdletObject verb="Format" noun="Custom">
+      <Name>Format-Custom</Name>
+      <GeneralHelp>
+        <Synopsis>Uses a customized view to format the output.</Synopsis>
+        <Description>The Format-Custom cmdlet formats the output of a command as defined in an alternate view. Format-Custom is designed to display views that are not just tables or just lists. You can use the views defined in the *format.PS1XML files in the Windows PowerShell directory, or you can create your own views in new PS1XML files and use the Update-FormatData cmdlet to add them to Windows PowerShell.</Description>
+        <Notes>Format-Custom is designed to display views that are not just tables or just lists. To display an alternate table view, use Format-Table. To display an alternate list view, use Format-List.
+
+You can also refer to Format-Custom by its built-in alias, "fc". For more information, see about_Aliases.
+
+The GroupBy parameter assumes that the objects are sorted. Before using Format-Custom to group the objects, use Sort-Object to sort them.</Notes>
+        <InputType>PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Format-Custom.</InputTypeDescription>
+        <ReturnType>PSObject</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Format-Custom returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property Depth GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property Depth GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Format-Custom [[-Property] &lt;Object[]&gt;] [-Depth &lt;Int32&gt;] [-GroupBy &lt;Object&gt;] [-View &lt;String&gt;] [-ShowError] [-DisplayError] [-Force] [-Expand &lt;String&gt; {CoreOnly | EnumOnly | Both} ] [-InputObject &lt;PSObject&gt;] [-PersistWhenOutput]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="Object[]" varLen="true" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
+          <Name>Property</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the object properties that appear in the display and the order in which they appear. Wildcards are permitted.
+
+If you omit this parameter, the properties that appear in the display depend on the object being displayed. The parameter name ("Property") is optional. You cannot use the Property and View parameters in the same command.
+
+The value of the Property parameter can be a new calculated property. To create a calculated property, use a hash table. Valid keys are:
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- Depth &lt;int32&gt;</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="Int32" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Depth</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateRangeAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the number of columns in the display.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>GroupBy</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Formats the output in groups based on a shared property or value. Enter an expression or a property of the output.
+
+The value of the GroupBy parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
+
+-- Name (or Label) &lt;string&gt;
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- FormatString &lt;string&gt;</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>View</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the name of an alternate format or "view." If you omit this parameter, Format-Custom uses a default custom view. You cannot use the Property and View parameters in the same command.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>ShowError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Sends errors through the pipeline. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-Custom command, and the expressions do not appear to be working. The following shows an example of the results of adding the ShowError parameter with an expression.
+
+PS &gt; Get-Date | Format-Custom DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek $_ / $null
+--------- ------------
+Wednesday
+
+Failed to evaluate expression " $_ / $null ".
+ + CategoryInfo : InvalidArgument: (10/30/2013 2:28:07 PM:PSObject) [], RuntimeException
+ + FullyQualifiedErrorId : mshExpressionError</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>DisplayError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Displays errors at the command line. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-Custom command, and the expressions do not appear to be working. The following shows an example of the results of adding the DisplayError parameter with an expression.
+
+PS &gt; Get-Date | Format-Custom DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek  $_ / $null
+--------- ------------
+Wednesday #ERR</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Force</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Directs the cmdlet to display all of the error information. Use with the DisplayError or ShowError parameters. By default, when an error object is written to the error or display streams, only some of the error information is displayed.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Expand</Name>
+          <Attributes>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Formats the collection object, as well as the objects in the collection. This parameter is designed to format objects that support the ICollection (System.Collections) interface. The default value is EnumOnly.
+
+Valid values are:
+
+-- EnumOnly: Displays the properties of the objects in the collection.
+
+-- CoreOnly: Displays the properties of the collection object.
+
+-- Both: Displays the properties of the collection object and the properties of objects in the collection.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be formatted. Enter a variable that contains the objects or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>PersistWhenOutput</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Command Start-Transcript | Format-Custom -View MyView</Cmd>
+          <Description>This command formats information about the Start-Transcript cmdlet in the format defined by the MyView view, a custom view created by the user. To run this command successfully, you must first create a new PS1XML file, define the MyView view, and then use the Update-FormatData command to add the PS1XML file to Windows PowerShell.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; Get-Process winlogon | Format-Custom</Cmd>
+          <Description>This command formats information about the Winlogon process in an alternate customized view. Because the command does not use the View parameter, Format-Custom uses a default custom view to format the data.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Format-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-List</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Table</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Wide</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Format" noun="Default">
+      <Name>Format-Default</Name>
+      <GeneralHelp>
+        <Synopsis>Formats the output using the default format.</Synopsis>
+        <Description>The Format-Default cmdlet formats the output of a command using the default output as defined in the ps1xml files. The object type determines the default layout.</Description>
+        <Notes />
+        <InputType>PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Format-Default.</InputTypeDescription>
+        <ReturnType>PSObject</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Format-Default returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Format-Default [-InputObject &lt;PSObject&gt;] [-PersistWhenOutput]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be formatted. Enter a variable that contains the objects or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>PersistWhenOutput</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Service | Format-Default</Cmd>
+          <Description>This command formats service using the default output. By default, they are formatted in a table with three columns. The Get-Service cmdlet gets objects representing Windows services. The pipeline operator (|) passes the objects to the Format-Default cmdlet. Format-Default formats the objects in a table, list, wide table, or custom output, depending on what their default format is.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Format-Custom</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-List</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Table</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Wide</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Format" noun="List">
+      <Name>Format-List</Name>
+      <GeneralHelp>
+        <Synopsis>Formats the output as a list of properties in which each property appears on a new line.</Synopsis>
+        <Description>The Format-List cmdlet formats the output of a command as a list of properties in which each property is displayed on a separate line. You can use Format-List to format and display all or selected properties of an object as a list (format-list *).
+
+Because more space is available for each item in a list than in a table, Windows PowerShell displays more properties of the object in the list, and the property values are less likely to be truncated.</Description>
+        <Notes>You can also refer to Format-List by its built-in alias, "FL". For more information, see about_Aliases.
+
+The format cmdlets, such as Format-List, arrange the data to be displayed but do not display it. The data is displayed by the output features of Windows PowerShell and by the cmdlets that contain the Out verb (the Out cmdlets), such as Out-Host, Out-File, and Out-Printer.
+
+If you do not use a format cmdlet, Windows PowerShell applies that default format for each object that it displays.
+
+The GroupBy parameter assumes that the objects are sorted. Before using Format-Custom to group the objects, use Sort-Object to sort them.
+
+The View parameter lets you specify an alternate format for the table. You can use the views defined in the *.format.PS1XML files in the Windows PowerShell directory, or you can create your own views in new PS1XML files and use the Update-FormatData cmdlet to include them in Windows PowerShell.
+
+The alternate view for the View parameter must use the list format; if not, the command fails. If the alternate view is a table, use Format-Table. If the alternate view is neither a list nor a table, use Format-Custom.</Notes>
+        <InputType>PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Format-List.</InputTypeDescription>
+        <ReturnType>PSObject</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Format-List returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Format-List [[-Property] &lt;Object[]&gt;] [-GroupBy &lt;Object&gt;] [-View &lt;String&gt;] [-ShowError] [-DisplayError] [-Force] [-Expand &lt;String&gt; {CoreOnly | EnumOnly | Both} ] [-InputObject &lt;PSObject&gt;] [-PersistWhenOutput]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="Object[]" varLen="true" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
+          <Name>Property</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the object properties that appear in the display and the order in which they appear. Wildcards are permitted.
+
+If you omit this parameter, the properties that appear in the display depend on the object being displayed. The parameter name ("Property") is optional. You cannot use the Property and View parameters in the same command.
+
+The value of the Property parameter can be a new calculated property. To create a calculated property, use a hash table. Valid keys are:
+
+-- Name (or Label) &lt;string&gt;
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- FormatString &lt;string&gt;</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>GroupBy</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Formats the output in groups based on a shared property or value. Enter an expression or a property of the output.
+
+The value of the GroupBy parameter can be a new calculated property. To create a calculated property, use a hash table. Valid keys are:
+
+-- Name (or Label) &lt;string&gt;
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- FormatString &lt;string&gt;</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>View</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the name of an alternate list format or "view." You cannot use the Property and View parameters in the same command.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>ShowError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Sends errors through the pipeline. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-List command, and the expressions do not appear to be working. The following shows an example of the results of adding the ShowError parameter with an expression.
+
+PS &gt; Get-Date | Format-List DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek $_ / $null
+--------- ------------
+Wednesday
+
+Failed to evaluate expression " $_ / $null ".
+ + CategoryInfo : InvalidArgument: (10/30/2013 2:28:07 PM:PSObject) [], RuntimeException
+ + FullyQualifiedErrorId : mshExpressionError</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>DisplayError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Displays errors at the command line. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-List command, and the expressions do not appear to be working. The following shows an example of the results of adding the DisplayError parameter with an expression.
+
+PS &gt; Get-Date | Format-List DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek  $_ / $null
+--------- ------------
+Wednesday #ERR</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Force</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Directs the cmdlet to display all of the error information. Use with the DisplayError or ShowError parameters. By default, when an error object is written to the error or display streams, only some of the error information is displayed.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Expand</Name>
+          <Attributes>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Formats the collection object, as well as the objects in the collection. This parameter is designed to format objects that support the ICollection (System.Collections) interface. The default value is EnumOnly.
+
+Valid values are:
+
+-- EnumOnly: Displays the properties of the objects in the collection.
+
+-- CoreOnly: Displays the properties of the collection object.
+
+-- Both: Displays the properties of the collection object and the properties of objects in the collection.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be formatted. Enter a variable that contains the objects or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>PersistWhenOutput</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Service | Format-List</Cmd>
+          <Description>This command formats information about services on the computer as a list. By default, the services are formatted as a table. The Get-Service cmdlet gets objects representing the services on the computer. The pipeline operator (|) passes the results through the pipeline to Format-List. Then, the Format-List command formats the service information in a list and sends it to the default output cmdlet for display.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; $a = Get-ChildItem $PSHome\*.ps1xml
+PS C:\&gt; Format-List -InputObject $a</Cmd>
+          <Description>These commands display information about the PS1XML files in the Windows PowerShell directory as a list.
+
+The first command gets the objects representing the files and stores them in the $a variable.
+
+The second command uses Format-List to format information about objects stored in $a. This command uses the InputObject parameter to pass the variable to Format-List, which then sends the formatted output to the default output cmdlet for display.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 3</Name>
+          <Cmd>PS C:\&gt; Get-Process | Format-List -Property Name,BasePriority,PriorityClass</Cmd>
+          <Description>This command displays the name, base priority, and priority class of each process on the computer. It uses the Get-Process cmdlet to get an object representing each process. The pipeline operator (|) passes the process objects through the pipeline to Format-List. Format-List formats the processes as a list of the specified properties. The "Property" parameter name is optional, so you can omit it.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 4</Name>
+          <Cmd>PS C:\&gt; Get-Process winlogon | Format-List -Property *</Cmd>
+          <Description>This command displays all of the properties of the Winlogon process. It uses the Get-Process cmdlet to get an object representing the Winlogon process. The pipeline operator (|) passes the Winlogon process object through the pipeline to Format-List. The command uses the Property parameter to specify the properties and the * to indicate all properties. Because the name of the Property parameter is optional, you can omit it and type the command as: "format-list *". Format-List automatically sends the results to the default output cmdlet for display.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Format-Custom</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Table</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Wide</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Format" noun="Table">
+      <Name>Format-Table</Name>
+      <GeneralHelp>
+        <Synopsis>Formats the output as a table.</Synopsis>
+        <Description>The Format-Table cmdlet formats the output of a command as a table with the selected properties of the object in each column. The object type determines the default layout and properties that are displayed in each column, but you can use the Property parameter to select the properties that you want to see.
+
+You can also use a hash table to add calculated properties to an object before displaying it and to specify the column headings in the table. To add a calculated property, use the Property or GroupBy parameters.</Description>
+        <Notes>The GroupBy parameter assumes that the objects are sorted. Before using Format-Table to group the objects, use the Sort-Object cmdlet to sort them.
+
+The View parameter lets you specify an alternate format for the table. You can use the views defined in the *.format.PS1XML files in the Windows PowerShell directory or you can create your own views in new PS1XML files and then use the Update-FormatData cmdlet to include them in Windows PowerShell.
+
+The alternate views for the View parameter must use the table format. If it does not, the command fails. If the alternate view is a list, use the Format-List cmdlet. If the alternate view is neither a list nor a table, use the Format-Custom cmdlet.</Notes>
+        <InputType>PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Format-Table.</InputTypeDescription>
+        <ReturnType>PSObject</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Format-Table returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="AutoSize HideTableHeaders Wrap Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="AutoSize HideTableHeaders Wrap Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Format-Table [-AutoSize] [-HideTableHeaders] [-Wrap] [[-Property] &lt;Object[]&gt;] [-GroupBy &lt;Object&gt;] [-View &lt;String&gt;] [-ShowError] [-DisplayError] [-Force] [-Expand &lt;String&gt; {CoreOnly | EnumOnly | Both} ] [-InputObject &lt;PSObject&gt;] [-PersistWhenOutput]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>AutoSize</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Adjusts the column size and number of columns based on the width of the data. By default, the column size and number are determined by the view.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>HideTableHeaders</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Omits the column headings from the table.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Wrap</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Displays text that exceeds the column width on the next line. By default, text that exceeds the column width is truncated.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="Object[]" varLen="true" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
+          <Name>Property</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property. Wildcards are permitted.
+
+If you omit this parameter, the properties that appear in the display depend on the object being displayed. The parameter name ("Property") is optional. You cannot use the Property and View parameters in the same command.
+
+The value of the Property parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
+
+-- Name (or Label) &lt;string&gt;
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- FormatString &lt;string&gt;
+
+-- Width &lt;int32&gt;
+
+-- Alignment (value can be "Left", "Center", or "Right")</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>GroupBy</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Arranges sorted output in separate tables based on a property value. For example, you can use GroupBy to list services in separate tables based on their status.
+
+Enter an expression or a property of the output. The output must be sorted before you send it to Format-Table.
+
+The value of the GroupBy parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
+
+-- Name (or Label) &lt;string&gt;
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- FormatString &lt;string&gt;</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>View</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the name of an alternate table format or "view." You cannot use the Property and View parameters in the same command.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>ShowError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Sends errors through the pipeline. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-Table command, and the expressions do not appear to be working. The following shows an example of the results of adding the ShowError parameter with an expression.
+
+PS &gt; Get-Date | Format-Table DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek $_ / $null
+--------- ------------
+Wednesday
+
+Failed to evaluate expression " $_ / $null ".
+ + CategoryInfo : InvalidArgument: (10/30/2013 2:28:07 PM:PSObject) [], RuntimeException
+ + FullyQualifiedErrorId : mshExpressionError
+</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>DisplayError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Displays errors at the command line. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-Table command, and the expressions do not appear to be working. The following shows an example of the results of adding the DisplayError parameter with an expression.
+
+PS C:\&gt; Get-Date | Format-Table DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek  $_ / $null
+--------- ------------
+Wednesday #ERR</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Force</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Directs the cmdlet to display all of the error information. Use with the DisplayError or ShowError parameters. By default, when an error object is written to the error or display streams, only some of the error information is displayed.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Expand</Name>
+          <Attributes>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Formats the collection object, as well as the objects in the collection. This parameter is designed to format objects that support the ICollection (System.Collections) interface. The default value is EnumOnly.
+
+Valid values are:
+
+-- EnumOnly: Displays the properties of the objects in the collection.
+
+-- CoreOnly: Displays the properties of the collection object.
+
+-- Both: Displays the properties of the collection object and the properties of objects in the collection.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be formatted. Enter a variable that contains the objects, or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>PersistWhenOutput</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Module | Format-Table -AutoSize</Cmd>
+          <Description>This command formats information about loaded Windows PowerShell modules in a table. By default, they are formatted in a list. The Get-Module cmdlet gets objects representing the loaded modules. The pipeline operator (|) passes the object to the Format-Table command. Format-Table formats the objects in a table. The Autosize parameter adjusts the column widths to minimize truncation.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; Get-Process | Sort-Object -Property BasePriority | Format-Table -GroupBy BasePriority -Wrap</Cmd>
+          <Description>This command displays the processes on the computer in groups with the same base priority.
+
+The Get-Process cmdlet gets objects representing each process on the computer. The pipeline operator (|) passes the object to the Sort-Object cmdlet, which sorts the objects in order of their base priority.
+
+Another pipeline operator passes the results to the Format-Table cmdlet. The GroupBy parameter arranges the data about the processes into groups based on the value of their BasePriority property. The Wrap parameter ensures that data is not truncated.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 3</Name>
+          <Cmd>PS C:\&gt; Get-Process | Where-Object StartTime -ne $null | Sort-Object StartTime | Format-Table -View StartTime</Cmd>
+          <Description>This command displays information about the processes on the computer in group based on the start date of the process. It uses the Get-Process cmdlet to get objects representing the processes on the computer. The pipeline operator (|) sends the output of Get-Process first to Where-Object to filter processes that don't have a start time (in which case we don't have access to that information) and then to the Sort-Object cmdlet, which sorts it based on the StartTime property. Another pipeline operator sends the sorted results to Format-Table.
+
+The View parameter is used to select the StartTime view that is defined in the DotNetTypes.format.ps1xml formatting file for System.Diagnostics.Process objects, such as those returned by Get-Process. This view converts the StartTime of the process to a short date and then groups the processes by start date.
+
+The DotNetTypes.format.ps1xml formatting file also contains a Priority view for processes, and you can create your own format.ps1xml files with customized views.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 4</Name>
+          <Cmd>PS C:\&gt; Get-Service | Format-Table -Property Name,DependentServices</Cmd>
+          <Description>This command displays all of the services on the computer in a table with two columns, Name and DependentServices. The command uses the Get-Service cmdlet to get all of the services on the computer. The pipeline operator (|) sends the results to the Format-Table cmdlet, which formats the output in a table. The Property parameter specifies the properties that appear in the table as columns. The name of the Property parameter is optional, so you can omit it ("Format-Table Name, DependentServices").
+
+Property and DependentServices are just two of the properties of service objects. To view all of the properties, invoke "Get-Service | Get-Member".</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 5</Name>
+          <Cmd>PS C:\&gt; Get-Process notepad | Format-Table ProcessName,@{Label="TotalRunningTime"; Expression={(Get-Date) - $_.StartTime}}</Cmd>
+          <Description>This command shows how to use a calculated property in a table. The command displays a table with the process name and total running time of all Notepad processes on the local computer. The total running time is calculated by subtracting the start time of each process from the current time.
+
+The command uses the Get-Process cmdlet to get all processes named "Notepad" on the local computer. The pipeline operator (|) sends the results to Format-Table, which displays a table with two columns: ProcessName, a standard property of processes, and TotalRunningTime, a calculated property.
+
+The TotalRunningTime property is specified by a hash table with two keys, Label and Expression. The name of the property is assigned to the Label key. The calculation is assigned to the Expression key. The expression gets the StartTime property of each process object and subtracts it from the result of a Get-Date command, which gets the current date (and time).
+</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 6</Name>
+          <Cmd>PS C:\&gt; $processes = Get-CimObject -Computer Server01 Win32_Process -Filter "Name='notepad.exe'"
+PS C:\&gt; $processes | Format-Table ProcessName,@{Label="Total Running Time";Expression={(Get-Date) - $_.CreationDate}}</Cmd>
+          <Description>These commands are similar to the previous command, except that these commands use the Get-CimObject cmdlet and the Win32_Process class to display information about Notepad processes on a remote computer.
+
+The first command uses the Get-CimObject cmdlet to get instances of the Common Information Model (CIM) Win32_Process class that describes all of the processes on the Server01 computer that are named Notepad.exe. The command stores the process information in the $processes variable.
+
+The second command uses a pipeline operator (|) to send the process information in the $processes variable to the Format-Table cmdlet, which displays the ProcessName of each process along with a new calculated property.
+
+The command assigns the name of the new calculated property, Total Running Time, to the Label key. The script block that is assigned to the Expression key calculates how long the process has been running by subtracting the creation date of the process from the current date. The Get-Date cmdlet gets the current date. Then, the creation date is subtracted from the current date. The result is the value of Total Running Time.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Format-Custom</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-List</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Wide</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Format" noun="Wide">
+      <Name>Format-Wide</Name>
+      <GeneralHelp>
+        <Synopsis>Formats objects as a wide table that displays only one property of each object.</Synopsis>
+        <Description>The Format-Wide cmdlet formats objects as a wide table that displays only one property of each object. You can use the Property parameter to determine which property is displayed.</Description>
+        <Notes>You can also refer to Format-Wide by its built-in alias, "fw". For more information, see about_Aliases.
+
+The GroupBy parameter assumes that the objects are sorted. Before using Format-Custom to group the objects, use Sort-Object to sort them.
+
+The -View parameter lets you specify an alternate format for the table. You can use the views defined in the *.format.PS1XML files in the Windows PowerShell directory or you can create your own views in new PS1XML files and use the Update-FormatData cmdlet to include them in Windows PowerShell.
+
+The alternate view for the View parameter must use table format; if it does not, the command fails. If the alternate view is a list, use Format-List. If the alternate view is neither a list nor a table, use Format-Custom.</Notes>
+        <InputType>PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Format-Wide.</InputTypeDescription>
+        <ReturnType>PSObject</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Format-Wide returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property AutoSize Column GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property AutoSize Column GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Format-Wide [[-Property] &lt;Object&gt;] [-AutoSize] [-Column &lt;Int32&gt;] [-GroupBy &lt;Object&gt;] [-View &lt;String&gt;] [-ShowError] [-DisplayError] [-Force] [-Expand &lt;String&gt; {CoreOnly | EnumOnly | Both} ] [-InputObject &lt;PSObject&gt;] [-PersistWhenOutput]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
+          <Name>Property</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the object properties that appear in the display and the order in which they appear. Wildcards are permitted.
+
+If you omit this parameter, the properties that appear in the display depend on the object being displayed. The parameter name ("Property") is optional. You cannot use the Property and View parameters in the same command.
+
+The value of the Property parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- FormatString &lt;string&gt;</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>AutoSize</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Adjusts the column size and number of columns based on the width of the data. By default, the column size and number are determined by the view. You cannot use the AutoSize and Column parameters in the same command.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="Int32" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Column</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateRangeAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the number of columns in the display. You cannot use the AutoSize and Column parameters in the same command.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>GroupBy</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Formats the output in groups based on a shared property or value. Enter an expression or a property of the output.
+
+The value of the GroupBy parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
+
+-- Name (or Label) &lt;string&gt;
+
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+-- FormatString &lt;string&gt;</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>View</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the name of an alternate table format or "view." You cannot use the Property and View parameters in the same command.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>ShowError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Sends errors through the pipeline. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-Wide command, and the expressions do not appear to be working. The following shows an example of the results of adding the ShowError parameter with an expression.
+
+PS &gt; Get-Date | Format-Wide DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek $_ / $null
+--------- ------------
+Wednesday
+
+Failed to evaluate expression " $_ / $null ".
+ + CategoryInfo : InvalidArgument: (10/30/2013 2:28:07 PM:PSObject) [], RuntimeException
+ + FullyQualifiedErrorId : mshExpressionError</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>DisplayError</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Displays errors at the command line. This parameter is rarely used, but can be used as a debugging aid when you are formatting expressions in a Format-Wide command, and the expressions do not appear to be working. The following shows an example of the results of adding the DisplayError parameter with an expression.
+
+PS &gt; Get-Date | Format-Wide DayOfWeek,{ $_ / $null } -ShowError
+DayOfWeek  $_ / $null
+--------- ------------
+Wednesday #ERR</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Force</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Overrides restrictions that prevent the command from succeeding, just so the changes do not compromise security. For example, Force will override the read-only attribute or create directories to complete a file path, but it will not attempt to change file permissions.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Expand</Name>
+          <Attributes>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Formats the collection object, as well as the objects in the collection. This parameter is designed to format objects that support the ICollection (System.Collections) interface. The default value is EnumOnly.
+
+Valid values are:
+
+-- EnumOnly: Displays the properties of the objects in the collection.
+
+-- CoreOnly: Displays the properties of the collection object.
+
+-- Both: Displays the properties of the collection object and the properties of objects in the collection.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be formatted. Enter a variable that contains the objects, or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>PersistWhenOutput</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-ChildItem | Format-Wide -Column 3</Cmd>
+          <Description>This command displays the names of files in the current directory in three columns across the screen. The Get-ChildItem cmdlet gets objects representing each file in the directory. The pipeline operator (|) passes the file objects through the pipeline to Format-Wide, which formats them for output. The Column parameter specifies the number of columns.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; Get-ChildItem HKCU:\Software\Microsoft | Format-Wide -Property PSChildName -AutoSize</Cmd>
+          <Description>This command displays the names of registry keys in the HKEY_CURRENT_USER\Software\Microsoft key. The Get-ChildItem cmdlet gets objects representing the keys. The path is specified as "HKCU:", one of the drives exposed by the Windows PowerShell Registry provider, followed by the key path. The pipeline operator (|) passes the registry key objects through the pipeline to Format-Wide, which formats them for output. The Property parameter specifies the name of the property, and the AutoSize parameter adjusts the columns for readability.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Format-Custom</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-List</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Format-Table</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Out" noun="Default">
+      <Name>Out-Default</Name>
+      <GeneralHelp>
+        <Synopsis>Sends the output to the default formatter and to the default output cmdlet.</Synopsis>
+        <Description>The Out-Default cmdlet sends output to the default formatter and the default output cmdlet. This cmdlet has no effect on the formatting or output of Windows PowerShell commands. It is a placeholder that lets you write your own Out-Default function or cmdlet.</Description>
+        <Notes>You should never manually call Out-Default. Out-Default is implicitly invoked automatically at the end of every command.</Notes>
+        <InputType>object</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object into Out-Default.</InputTypeDescription>
+        <ReturnType>None</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription />
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Out-Default [-InputObject &lt;PSObject&gt;]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Accepts input into the cmdlet.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples />
+      <RelatedLinks />
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+  </Cmdlets>
+</ModuleObject>
