@@ -1,0 +1,4 @@
+# Treat all files in this project as binary. This enables atomic
+# checkins (no merges, these are signed files) and it preserves
+# CRLF line endings
+* binary
