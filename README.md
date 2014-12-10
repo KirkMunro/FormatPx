@@ -166,9 +166,9 @@ but now you can apply custom formatting much easier by simply using Format-*
 cmdlets!
 
 In addition to the separation of format data from object data, FormatPx also
-modifies the default PowerShell behaviour to prevent certain types of objects
-from being displayed in the format that you desire without using the -Force
-parameter. For example, consider this snippet:
+modifies the default PowerShell behaviour that would prevent certain types of
+objects from being displayed in the format that you desired without using the
+-Force parameter. For example, consider this snippet:
 
 ```
 PS C:\> $sb = {'Script block'}
