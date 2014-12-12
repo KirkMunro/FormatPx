@@ -230,6 +230,9 @@ with it and instruct PowerShell to render it using the default format instead,
 whatever that may be. You can also invoke Format-Default using the convenient fd
 alias as well.
 
+Here's a short video demonstrating the FormatPx module in action:
+[![Better PowerShell formatting with FormatPx](http://img.youtube.com/vi/OpXNeg_2cfM/0.jpg)](http://www.youtube.com/watch?v=OpXNeg_2cfM)
+
 That should give you a good idea of what is included in this module. If you have
 ideas on what else you might like to see related to formatting in PowerShell, please
 let me know on the GitHub page.
