@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
+using System.Linq;
+using System.Reflection;
 
 namespace FormatPx
 {
@@ -13,10 +16,13 @@ namespace FormatPx
         internal static Type GroupEndData    = Type.GetType("Microsoft.PowerShell.Commands.Internal.Format.GroupEndData,    System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
         internal static Type FormatEndData   = Type.GetType("Microsoft.PowerShell.Commands.Internal.Format.FormatEndData,   System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
+        internal static string notInAGroup = "outsider_group_979d659e-59a9-4554-8499-f782debbfc2b";
+
         bool persistWhenOutput = false;
         dynamic format = null;
         dynamic group = null;
         Collection<object> outOfBandFormatData = new Collection<object>();
+        Dictionary<string, dynamic> groups = new Dictionary<string, dynamic>(StringComparer.OrdinalIgnoreCase);
 
         public FormatProxyCmdletHelper(PSCmdlet proxyCmdlet, bool persistWhenOutput)
             : base(proxyCmdlet)
@@ -69,13 +75,139 @@ namespace FormatPx
                     entry = new FormatEntry();
                     entry.Data = item.BaseObject;
                     entryCollection.Add(entry);
-
                 }
                 else if (GroupStartData.IsInstanceOfType(item.BaseObject))
                 {
-                    // Create the group object and set the start value
-                    group = new FormatContainer();
-                    group.Start = item.BaseObject;
+                    // Set the default as not belonging to an official group
+                    string groupValue = notInAGroup;
+                    // Try to look up the group value on the object itself
+                    PSObject propertyPos = item;
+                    PSPropertyInfo propertyInfo = propertyPos.Properties["groupingEntry"];
+                    if ((propertyInfo != null) && (propertyInfo.Value != null))
+                    {
+                        propertyPos = new PSObject(propertyInfo.Value);
+                        propertyInfo = propertyPos.Properties["formatValueList"];
+                        if ((propertyInfo != null) && (propertyInfo.Value != null))
+                        {
+                            MethodInfo toArrayMethod = propertyInfo.Value.GetType().GetMethod("ToArray");
+                            if (toArrayMethod != null)
+                            {
+                                Array collection = (Array)toArrayMethod.Invoke(propertyInfo.Value, null);
+                                if (collection.Length > 0)
+                                {
+                                    propertyPos = new PSObject(collection.GetValue(0));
+                                    propertyInfo = propertyPos.Properties["formatValueList"];
+                                    if ((propertyInfo != null) && (propertyInfo.Value != null))
+                                    {
+                                        toArrayMethod = propertyInfo.Value.GetType().GetMethod("ToArray");
+                                        if (toArrayMethod != null)
+                                        {
+                                            collection = (Array)toArrayMethod.Invoke(propertyInfo.Value, null);
+                                            if (collection.Length > 1)
+                                            {
+                                                propertyPos = new PSObject(collection.GetValue(1));
+                                                propertyInfo = propertyPos.Properties["propertyValue"];
+                                                if ((propertyInfo != null) && (propertyInfo.Value != null))
+                                                {
+                                                    groupValue = propertyInfo.Value as string;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // If the item is still not in a group and GroupBy was used, look harder
+                    if ((string.Compare(groupValue,notInAGroup,true) == 0) && 
+                        proxyCmdlet.MyInvocation.BoundParameters.ContainsKey("GroupBy"))
+                    {
+                        // Check to see if we already have an appropriate group created using the value that
+                        // we get from the expression/property we are grouping on
+                        object groupBy = proxyCmdlet.MyInvocation.BoundParameters["GroupBy"];
+                        if (groupBy is string)
+                        {
+                            // If we're grouping on a string property name, look up the value of that property
+                            propertyInfo = inputObject.Properties[groupBy as string];
+                            if ((propertyInfo != null) && (propertyInfo.Value != null))
+                            {
+                                groupValue = propertyInfo.Value.ToString();
+                            }
+                        }
+                        else
+                        {
+                            // Otherwise, identify the expression/name pair from the GroupBy parameter
+                            Hashtable selectHt = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                            if (groupBy is ScriptBlock)
+                            {
+                                // For ScriptBlock parameters, the expression is the script block and the
+                                // name is the script block in string format
+                                ScriptBlock expression = groupBy as ScriptBlock;
+                                if (expression != null)
+                                {
+                                    selectHt.Add("Expression", groupBy);
+                                    selectHt.Add("Name", expression.ToString());
+                                }
+                            }
+                            else if (groupBy is Hashtable)
+                            {
+                                // For HashTable parameters, we extract the expression and/or name from the
+                                // hashtable that was passed in.
+                                Hashtable ht = groupBy as Hashtable;
+                                string nameKey = ht.Keys.Cast<string>().FirstOrDefault(x => ("label".StartsWith(x, StringComparison.OrdinalIgnoreCase) &&
+                                                                                             x.StartsWith("l", StringComparison.OrdinalIgnoreCase)) ||
+                                                                                            ("name".StartsWith(x, StringComparison.OrdinalIgnoreCase) &&
+                                                                                             x.StartsWith("n", StringComparison.OrdinalIgnoreCase)));
+                                string expressionKey = ht.Keys.Cast<string>().FirstOrDefault(x => "expression".StartsWith(x, StringComparison.OrdinalIgnoreCase) &&
+                                                                                                   x.StartsWith("e", StringComparison.OrdinalIgnoreCase));
+                                string formatStringKey = ht.Keys.Cast<string>().FirstOrDefault(x => "formatstring".StartsWith(x, StringComparison.OrdinalIgnoreCase) &&
+                                                                                                     x.StartsWith("f", StringComparison.OrdinalIgnoreCase));
+                                if (!string.IsNullOrEmpty(nameKey))
+                                {
+                                    selectHt.Add("Name", ht[nameKey] as string);
+                                }
+                                if (!string.IsNullOrEmpty(expressionKey))
+                                {
+                                    ScriptBlock expression = ht[expressionKey] as ScriptBlock;
+                                    if (expression != null)
+                                    {
+                                        selectHt.Add("Expression", expression);
+                                        if (!selectHt.ContainsKey("Name"))
+                                        {
+                                            selectHt.Add("Name", expression.ToString());
+                                        }
+                                    }
+                                }
+                            }
+                            // Once we have the expression and name in the hashtable, use the
+                            // Select-Object cmdlet to get the value of the expression
+                            PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                            ps.AddCommand("Select-Object", false);
+                            ps.AddParameter("InputObject", inputObject);
+                            ps.AddParameter("Property", selectHt);
+                            foreach (PSObject psObject in ps.Invoke())
+                            {
+                                propertyInfo = psObject.Properties[selectHt["Name"] as string];
+                                if ((propertyInfo != null) && (propertyInfo.Value != null))
+                                {
+                                    groupValue = propertyInfo.Value.ToString();
+                                }
+                            }
+                        }
+                    }
+                    // Determine what group to use based on the group value
+                    if (groups.ContainsKey(groupValue))
+                    {
+                        // Refer to the group that we already received during this command
+                        group = groups[groupValue];
+                    }
+                    else
+                    {
+                        // Create the group object, set the start value, and add it to the groups collection
+                        group = new FormatContainer();
+                        group.Start = item.BaseObject;
+                        groups.Add(groupValue, group);
+                    }
                 }
                 else if (GroupEndData.IsInstanceOfType(item.BaseObject))
                 {
@@ -83,8 +215,11 @@ namespace FormatPx
                     entry = null;
                     // Add any out of band data to the current entry
                     AddOobInfoToFormatRecord(entry, ref outOfBandFormatData);
-                    // Add the end value to the current group object
-                    group.End = item.BaseObject;
+                    // Add the end value to the current group object if it is not already there
+                    if (group.End == null)
+                    {
+                        group.End = item.BaseObject;
+                    }
                 }
                 else if (FormatStartData.IsInstanceOfType(item.BaseObject))
                 {
@@ -194,8 +329,11 @@ namespace FormatPx
                 {
                     if (GroupEndData.IsInstanceOfType(item.BaseObject))
                     {
-                        // Add the end value to the current group object
-                        group.End = item.BaseObject;
+                        // Add the end value to the current group object if it is not already there
+                        if (group.End == null)
+                        {
+                            group.End = item.BaseObject;
+                        }
                     }
                     else if (FormatEndData.IsInstanceOfType(item.BaseObject))
                     {

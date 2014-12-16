@@ -21,6 +21,7 @@ namespace FormatPx
         [Parameter(
             HelpMessage = "Persists the format data on the object when it is output. By default, format data is discarded when output."
         )]
+        [Alias("Sticky")]
         public SwitchParameter PersistWhenOutput = false;
 
         protected override void ProcessRecord()
