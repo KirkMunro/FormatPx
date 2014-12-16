@@ -1,12 +1,12 @@
 ﻿<#############################################################################
-FormatPx separates the formatting layer from the data layer in PowerShell. By
-default, PowerShell's native Format-* cmdlets convert data objects into format
-objects when are then rendered in the console. This reduces the usefulness of
-the Format-* cmdlets, making it harder to work with formatting in PowerShell.
-FormatPx fixes this problem by attaching format data to objects rather than
-replacing objects with format data. This allows for data processing to
-continue beyond Format-* cmdlets, without losing any of the capabilities of
-the formatting engine in PowerShell.
+FormatPx separates the formatting layer from the data processing layer in
+PowerShell. By default, PowerShell's native Format-* cmdlets convert data
+objects into format objects when are then rendered in the console. This
+reduces the usefulness of the Format-* cmdlets, making it harder to work with
+formatting in PowerShell. FormatPx fixes this problem by attaching format data
+to objects rather than replacing objects with format data. This allows for
+data processing to continue beyond Format-* cmdlets, without losing any of the
+capabilities of the formatting engine in PowerShell.
 
 Copyright 2014 Kirk Munro
 
