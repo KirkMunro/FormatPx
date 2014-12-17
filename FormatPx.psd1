@@ -1,12 +1,12 @@
 ﻿<#############################################################################
-FormatPx separates the formatting layer from the data layer in PowerShell. By
-default, PowerShell's native Format-* cmdlets convert data objects into format
-objects when are then rendered in the console. This reduces the usefulness of
-the Format-* cmdlets, making it harder to work with formatting in PowerShell.
-FormatPx fixes this problem by attaching format data to objects rather than
-replacing objects with format data. This allows for data processing to
-continue beyond Format-* cmdlets, without losing any of the capabilities of
-the formatting engine in PowerShell.
+FormatPx separates the formatting layer from the data processing layer in
+PowerShell. By default, PowerShell's native Format-* cmdlets convert data
+objects into format objects when are then rendered in the console. This
+reduces the usefulness of the Format-* cmdlets, making it harder to work with
+formatting in PowerShell. FormatPx fixes this problem by attaching format data
+to objects rather than replacing objects with format data. This allows for
+data processing to continue beyond Format-* cmdlets, without losing any of the
+capabilities of the formatting engine in PowerShell.
 
 Copyright 2014 Kirk Munro
 
@@ -26,7 +26,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.0.0.0'
+        ModuleVersion = '1.0.0.1'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -36,7 +36,7 @@ limitations under the License.
 
             Copyright = 'Copyright 2014 Kirk Munro'
 
-          Description = 'FormatPx separates the formatting layer from the data layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.'
+          Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.'
 
     PowerShellVersion = '3.0'
 
@@ -68,6 +68,7 @@ limitations under the License.
                         'FormatPx.psm1'
                         'LICENSE'
                         'NOTICE'
+                        'en-us\FormatPx.dll-help.xml'
                         'scripts\Export-BinaryModule.ps1'
                         )
 
@@ -84,8 +85,8 @@ limitations under the License.
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUAhUOx8Xcae/S1oubH+hQGdo+
-# qtugghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUYE5wke+p13W+rYU5ZQfXsk5a
+# AfOgghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -198,23 +199,23 @@ limitations under the License.
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFCxg
-# 4rPO3PUsfRli2YwRON+MbLdwMA0GCSqGSIb3DQEBAQUABIIBAGeaCmd7b5c5Uh3H
-# 0GU6Hmsx5hGWJNugDoWZ3IEiqoowEYUXPfi3bCWuzOn7/P5AmgQys4MFNdMt4F3v
-# 406VaOof7c3Z++ZpHbBqM7gJ0OLkC6OVIRWmGewGzMrtUUezNCkUPxdS96McGMXo
-# Ouwd3yN1FzXgiXPEjfqi3zN0mzJU/URJVJevZXg1X7vJymFWdf9lgofEm683zLtj
-# 8Rzh/93tG342Y4UqTDCBxtpqVJOFLGbtiCpi/TEljElQ6fgEZyMEdFGMSYODQdfu
-# IXjcP6P/v5DH1tEsjZjWJy9F8hPk1SX6WvEb75iAN9UZRBnm5vN4+w1ZYa0sm15I
-# DVO4R/ShggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFEYr
+# l1M+VNAtkZFlGrkjcmWzQoP4MA0GCSqGSIb3DQEBAQUABIIBACmodIT2ExSM5Jzn
+# 0iMeT2JvXfmLznrSb7PhTnTbTqW7F+8c7euCcezBGOXzQ3CdL94XSkyb3p8FymNT
+# nTGjE3zHBmH2Gv1uS/yR8QtFU7JecboW2I+x/Ss+4hqODnVMu07Vyra28C6eKYJU
+# wEg8SYaLS85U+v1Vq41pXRc7B+MVsmjzdbke8I5+gHVZzCuO4UsBWtPbTAWvEv8j
+# r13nzMPh0vT/vuVrWTnzyqV3Q19RcoT1JQxQArP0avxrCuwnmhSE34ZK585Gc9hg
+# iNxzitUwzgHVSJ19nc5uG1ieS73w8vQHqwgxDIcSoTnqQLFHh82h2VQJYe+Qev13
+# C/1Y7TKhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTQxMjA5MjM0NDI5WjAjBgkqhkiG9w0BCQQxFgQUcJ+R
-# BBr1Lv4xkZfQJCHe6B9K0oYwDQYJKoZIhvcNAQEBBQAEggEAn865LuJdKHSWxbTk
-# awJQrvpSvhHjXpib8zcyOa4HsGMdq0Y7xu3sLumW6NyEfmbU5CUCGDQMjE+kXdf5
-# vHELXxoCkiUsUTu1OTWGzbg2/Rmzov9WK/geyQL1C9HsqdYlJ5F6ddlaLAmxsZi0
-# zodyh3x9qwt8SmgiouQfyo20qlltC6dpmXVNkXZO6ck6yvCoJcY7fn+hNDpJ+exx
-# pvHHQlQ14/B2bOj/jrHoE6dwsOpQoSpfWs/N1L8jiLF2+spTlYnzcjHV1QzmLCQQ
-# B5eOY2YcbzOU+qfc8xQeiRAbrcKNKDx7M9dm93K8Rjez/969caMV2mr/OqJO3iST
-# yzi/jQ==
+# BgkqhkiG9w0BCQUxDxcNMTQxMjE3MTUxNjI4WjAjBgkqhkiG9w0BCQQxFgQUlSry
+# Jf2Fa/14HW/N4olatxmnTY0wDQYJKoZIhvcNAQEBBQAEggEABzE1pwUttOUF0BOm
+# YRhy+ZQj1L6u4SqiGbsXdj2H+XquOeb4UtnlNrl7RkBS9aUVEjEOewJbp2TNU4jz
+# Nm+EtpZD0Y2xLE+hiiVniUUzEKLul4T76C4/Qtn/wHkJqEBPqVR1miRKX6rYTDkI
+# mxx9PmcEJh82izTKmzdftKTcVgbAMxn6xjxgEOvA66rAhCSM9iwa0r7oPrqrm4+e
+# NJGmvom8xN/0EEmU74u1Kh7LB6iISPbrN8697bGt/GtraxCy6K2GH6wVg5PwqVor
+# BxfvcxYf5uLsqKziJGulNiO1aQVqeuNylXFITpDT6ss3bXCTSRI/SLHEy1dUOU1x
+# Byl4cg==
 # SIG # End signature block

@@ -1,12 +1,12 @@
 ﻿<#############################################################################
-FormatPx separates the formatting layer from the data layer in PowerShell. By
-default, PowerShell's native Format-* cmdlets convert data objects into format
-objects when are then rendered in the console. This reduces the usefulness of
-the Format-* cmdlets, making it harder to work with formatting in PowerShell.
-FormatPx fixes this problem by attaching format data to objects rather than
-replacing objects with format data. This allows for data processing to
-continue beyond Format-* cmdlets, without losing any of the capabilities of
-the formatting engine in PowerShell.
+FormatPx separates the formatting layer from the data processing layer in
+PowerShell. By default, PowerShell's native Format-* cmdlets convert data
+objects into format objects when are then rendered in the console. This
+reduces the usefulness of the Format-* cmdlets, making it harder to work with
+formatting in PowerShell. FormatPx fixes this problem by attaching format data
+to objects rather than replacing objects with format data. This allows for
+data processing to continue beyond Format-* cmdlets, without losing any of the
+capabilities of the formatting engine in PowerShell.
 
 Copyright 2014 Kirk Munro
 
@@ -81,8 +81,8 @@ $ExecutionContext.SessionState.Module.OnRemove = {
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUC8l7FuDtDx6RaKhrDp01Nlfs
-# GzWgghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU7u03Vaizq0MUMifRVzPzSjL7
+# WwKgghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -195,23 +195,23 @@ $ExecutionContext.SessionState.Module.OnRemove = {
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFA4j
-# bRmLLIoUUd310Lh+nwqK5JrvMA0GCSqGSIb3DQEBAQUABIIBALIVL9OuBKzrWX0x
-# oEA5T4J3CnJdt9gz90OawWyek+1JKlmM/9nF25Fhhmwx9NFU3OZL/Vh5mtrMHGa4
-# gve4eNLxCBI+W/jvtr1aAbXLoWNZxnOeS9WepNbb+uQDsz0FBuVR2d7pApOXJcEj
-# mbcV9iKNm8n3I2bZpfVDYw3BuoUbJo7ZmdbU+EyUipjuPRYSLQlTUZ6PWZnsydkW
-# pfq9MY+1ijmbCReaC/UGe4R2QEaK95GtbOSXSyNod2N7QwhOLD+7+aP9AOiKzYH0
-# NfCZpqguOY/EZ5zpGH/spCJOsKh4LZ+QhFen8lg0Dvo9R9IPTMnUqUyabaslJIGj
-# wcKxkbShggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFJG9
+# bDhP92ISxr7pX0n1/UyT74WxMA0GCSqGSIb3DQEBAQUABIIBAB5reIVgHveN0mkw
+# KOn9xQxsV5WQXQkrj+WWv0GORkHVczNkMkKTGX81R5OxSDNgDBuXkOeXn+p4RszK
+# 8wrRCw/1uUrFo5DnwfBGewIjtSRQzR4tz7u3DqpImsfMVmq3U6hN5ESt02g7tx6Y
+# zsFdTNu42dFRLtr/ofSh3I010torOPIL+mEaETXwbrven2ftwAupNZgYkyLXzSaF
+# u7OIZeMgCpceTQx//UpnrKyJeeSmk4bR7UVbb2NHQPxutaYU8v2RJThU94ebUNC4
+# 7KVRuPw/J6arqCDAfKYxaapt3LESC8/hiX9h0ydxE+n3Nd0cmVl6I6Wkp//8r6Hb
+# G6LQmimhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTQxMjA5MjM0NDI5WjAjBgkqhkiG9w0BCQQxFgQUqH1L
-# jllc3w6X7inFjNLQgQUuT9EwDQYJKoZIhvcNAQEBBQAEggEAhhot1cXskTgHkies
-# qD836dKilK8JXn0KZCEGrEACsq7UupD83qtdV9ny81gV1M6dQJa9AuRTvBTpurFf
-# DRPsluljgDsCij/ztt7LixE7qX9F9Pz1bN9skrXAB9bNAJBCa0Luh0wrqPZL1698
-# NApNA/s7L5eCq4UVVlI/u11CxGnfjb5Wgo8mCFxu8kwAsuXA7MX4z6W/n5MWlr2m
-# PcEC+hYCZaUnm1Hx/zGG98MiANkGNYCmi5u7vgblZM/j3z4K+Pozn+gADijJt4Cw
-# pL7+ysdyi+s6J3uJbBWcTkFOgtOg+CvwMgkmPi0zNTew2VykZbJ938c5Sk76fRKC
-# hlYZUQ==
+# BgkqhkiG9w0BCQUxDxcNMTQxMjE3MTUxNjM3WjAjBgkqhkiG9w0BCQQxFgQU4BKy
+# nAdWRKh6a7h/1cNBd1LkvWEwDQYJKoZIhvcNAQEBBQAEggEAVCvHFltp8g6iAKaE
+# 5q7UWZruLgP4tTkoRQJ6u2A4VR5Zu+pyRtjJ0nS7Sj5oI01s1btranwLtlmSlPvF
+# 3AdfVbu4ahR8lLf4nU7Kf1ygoWBXhXTlGa2B92We2OcQIy9PY/rDlnLkxzNVKwuV
+# 7m7UmUNnD1Atja7xkNhKwUsJRy5Obtj0odMVSfd5c7lj2Sje/HjhTmqjp6S6G8Xf
+# TCuaF3iqEeHuxijaBftdh7WlBNX5nhtN4LZBPpXQTKkNeDVLmZCESXmZLgCXzNOV
+# tFzFghoeeftOLbLmlqJ0ngtUnXXo/N58ot0J/bexq9WCve2AjGRAFDIDR62APAQN
+# /elyhQ==
 # SIG # End signature block
