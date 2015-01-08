@@ -277,9 +277,10 @@ namespace FormatPx
             // Attach the collection of format objects that is emitted from the pipeline
             // to the object that was input using a well-known ETS property name, being
             // mindful of how persistence should work
-            if (inputObject.Properties["__FormatData"] != null)
+            PSPropertyInfo formatDataProperty = inputObject.GetPropertySafe("__FormatData");
+            if ((formatDataProperty != null) && (formatDataProperty.Value != null))
             {
-                Stack<FormatRecord> currentFormatDataStack = (Stack<FormatRecord>)inputObject.Properties["__FormatData"].Value;
+                Stack<FormatRecord> currentFormatDataStack = (Stack<FormatRecord>)formatDataProperty.Value;
                 // Pop off any non-persistent format data that is on the stack already
                 while ((currentFormatDataStack.Count > 0) &&
                         !currentFormatDataStack.Peek().PersistWhenOutput)

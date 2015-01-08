@@ -80,7 +80,7 @@ namespace FormatPx
             PSPropertyInfo formatDataProperty = null;
             if (InputObject != null)
             {
-                formatDataProperty = InputObject.Properties["__FormatData"];
+                formatDataProperty = InputObject.GetPropertySafe("__FormatData");
             }
             if ((formatDataProperty != null) && (formatDataProperty.Value != null))
             {
