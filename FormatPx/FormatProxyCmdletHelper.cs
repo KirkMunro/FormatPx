@@ -246,7 +246,7 @@ namespace FormatPx
             record.Entry = entryCollection;
 
             // Add the format record to the input object
-            AddFormatRecordToPSObject(inputObject, record);
+            AddFormatRecordToPSObject(inputObject, record, proxyCmdlet);
 
             // Once the formatting is finished for the object, write it to the pipeline
             proxyCmdlet.WriteObject(inputObject);
@@ -272,7 +272,7 @@ namespace FormatPx
             outOfBandFormatData = new Collection<object>();
         }
 
-        internal static void AddFormatRecordToPSObject(PSObject inputObject, dynamic record)
+        internal static void AddFormatRecordToPSObject(PSObject inputObject, dynamic record, PSCmdlet psCmdlet)
         {
             // Attach the collection of format objects that is emitted from the pipeline
             // to the object that was input using a well-known ETS property name, being
@@ -317,7 +317,9 @@ namespace FormatPx
                 Stack<FormatRecord> formatDataStack = new Stack<FormatRecord>();
                 formatDataStack.Push(record);
                 // Now add the stack to a the input object
-                inputObject.Properties.Add(new PSNoteProperty("__FormatData", formatDataStack));
+                PSNoteProperty formatDataNoteProperty = new PSNoteProperty("__FormatData", formatDataStack);
+                formatDataNoteProperty.Hide(psCmdlet);
+                inputObject.Properties.Add(formatDataNoteProperty);
             }
         }
 

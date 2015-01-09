@@ -44,7 +44,7 @@ namespace FormatPx
             dynamic record = new FormatRecord(PersistWhenOutput.IsPresent);
 
             // Add the format record to the input object
-            FormatProxyCmdletHelper.AddFormatRecordToPSObject(inputObject, record);
+            FormatProxyCmdletHelper.AddFormatRecordToPSObject(inputObject, record, this);
 
             // Then write the input object to the pipeline
             WriteObject(inputObject);
