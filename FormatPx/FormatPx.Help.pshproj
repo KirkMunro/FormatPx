@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <ModuleObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" fVersion="1.1" type="Script" mclass="Module" useSupports="false">
   <Name>FormatPx</Name>
-  <Version>1.0.0.1</Version>
+  <Version>1.0.3.4</Version>
   <Description>FormatPx separates the formatting layer from the data layer in PowerShell. By default, PowerShell's native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.</Description>
   <HasManifest>true</HasManifest>
   <OverridePostCount>false</OverridePostCount>
@@ -25,6 +25,8 @@ The GroupBy parameter assumes that the objects are sorted. Before using Format-C
         <ReturnTypeDescription>Format-Custom returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
       </GeneralHelp>
       <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property Depth GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property Depth GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property Depth GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property Depth GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
@@ -156,9 +158,12 @@ Valid values are:
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>PersistWhenOutput</Name>
           <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
             <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
-          <Aliases />
+          <Aliases>
+            <string>Sticky</string>
+          </Aliases>
           <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
           <DefaultValue />
         </ParameterDescription>
@@ -216,6 +221,8 @@ Valid values are:
       <ParamSets>
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
       <Syntax>
         <string>Format-Default [-InputObject &lt;PSObject&gt;] [-PersistWhenOutput]</string>
@@ -233,9 +240,12 @@ Valid values are:
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>PersistWhenOutput</Name>
           <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
             <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
-          <Aliases />
+          <Aliases>
+            <string>Sticky</string>
+          </Aliases>
           <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
           <DefaultValue />
         </ParameterDescription>
@@ -298,6 +308,8 @@ The alternate view for the View parameter must use the list format; if not, the 
         <ReturnTypeDescription>Format-List returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
       </GeneralHelp>
       <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
@@ -421,9 +433,12 @@ Valid values are:
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>PersistWhenOutput</Name>
           <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
             <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
-          <Aliases />
+          <Aliases>
+            <string>Sticky</string>
+          </Aliases>
           <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
           <DefaultValue />
         </ParameterDescription>
@@ -500,6 +515,8 @@ The alternate views for the View parameter must use the table format. If it does
         <ReturnTypeDescription>Format-Table returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
       </GeneralHelp>
       <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="AutoSize HideTableHeaders Wrap Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="AutoSize HideTableHeaders Wrap Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="AutoSize HideTableHeaders Wrap Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="AutoSize HideTableHeaders Wrap Property GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
@@ -658,8 +675,11 @@ Valid values are:
           <Name>PersistWhenOutput</Name>
           <Attributes>
             <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.AliasAttribute</string>
           </Attributes>
-          <Aliases />
+          <Aliases>
+            <string>Sticky</string>
+          </Aliases>
           <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
           <DefaultValue />
         </ParameterDescription>
@@ -763,6 +783,8 @@ The alternate view for the View parameter must use table format; if it does not,
         <ReturnTypeDescription>Format-Wide returns the objects that you passed into it with their format information attached.</ReturnTypeDescription>
       </GeneralHelp>
       <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property AutoSize Column GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property AutoSize Column GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property AutoSize Column GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Property AutoSize Column GroupBy View ShowError DisplayError Force Expand InputObject PersistWhenOutput Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
@@ -903,9 +925,12 @@ Valid values are:
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>PersistWhenOutput</Name>
           <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
             <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
-          <Aliases />
+          <Aliases>
+            <string>Sticky</string>
+          </Aliases>
           <Description>When formatting objects that are stored in a variable, persists the format information on those objects even after it is rendered in the console. By default, format information is removed from objects when it is rendered in the console.</Description>
           <DefaultValue />
         </ParameterDescription>
@@ -963,6 +988,8 @@ Valid values are:
       <ParamSets>
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
         <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
       <Syntax>
         <string>Out-Default [-InputObject &lt;PSObject&gt;]</string>
@@ -979,7 +1006,518 @@ Valid values are:
         </ParameterDescription>
       </Parameters>
       <Examples />
-      <RelatedLinks />
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Out-File</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Host</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Null</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Printer</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-String</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Out" noun="File">
+      <Name>Out-File</Name>
+      <GeneralHelp>
+        <Synopsis>Sends output to a file.</Synopsis>
+        <Description>The Out-File cmdlet sends output to a file. You can use this cmdlet instead of the redirection operator (&gt;) when you need to use its parameters.</Description>
+        <Notes>The Out cmdlets do not format objects; they just render them and send them to the specified display destination. If you send an unformatted object to an Out cmdlet, the cmdlet sends it to a formatting cmdlet before rendering it.
+
+The Out cmdlets do not have parameters for names or file paths. To send data to a cmdlet that contains the Out verb (an Out cmdlet), use a pipeline operator (|) to send the output of a Windows PowerShell command to the cmdlet. You can also store data in a variable and use the InputObject parameter to pass the data to the cmdlet. For help, see the examples.
+
+Out-File sends data, but it does not emit any output objects. If you pipe the output of Out-File to Get-Member, Get-Member reports that no objects have been specified.</Notes>
+        <InputType>System.Management.Automation.PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Out-File.</InputTypeDescription>
+        <ReturnType>None</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Out-File does not generate any output.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="ByPath" Params="FilePath Encoding Append Force NoClobber Width InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="ByLiteralPath" Params="LiteralPath Encoding Append Force NoClobber Width InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="ByPath" Params="FilePath Encoding Append Force NoClobber Width InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+        <CommandParameterSetInfo2 Name="ByLiteralPath" Params="LiteralPath Encoding Append Force NoClobber Width InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+      </ParamSets>
+      <Syntax>
+        <string>Out-File [-FilePath] &lt;String&gt; [[-Encoding] &lt;String&gt; {unknown | string | unicode | bigendianunicode | utf8 | utf7 | utf32 | ascii | default | oem} ] [-Append] [-Force] [-NoClobber] [-Width &lt;Int32&gt;] [-InputObject &lt;PSObject&gt;] [-WhatIf] [-Confirm]</string>
+        <string>Out-File -LiteralPath &lt;String&gt; [[-Encoding] &lt;String&gt; {unknown | string | unicode | bigendianunicode | utf8 | utf7 | utf32 | ascii | default | oem} ] [-Append] [-Force] [-NoClobber] [-Width &lt;Int32&gt;] [-InputObject &lt;PSObject&gt;] [-WhatIf] [-Confirm]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
+          <Name>FilePath</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the path to the output file.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="1" globbing="false">
+          <Name>Encoding</Name>
+          <Attributes>
+            <string>System.Management.Automation.ValidateNotNullOrEmptyAttribute</string>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the type of character encoding used in the file. Valid values are "Unicode", "UTF7", "UTF8", "UTF32", "ASCII", "BigEndianUnicode", "Default", and "OEM". "Unicode" is the default.
+
+"Default" uses the encoding of the system's current ANSI code page.
+
+"OEM" uses the current original equipment manufacturer code page identifier for the operating system.</Description>
+          <DefaultValue>Unicode</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Append</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Adds the output to the end of an existing file, instead of replacing the file contents.</Description>
+          <DefaultValue>Replace</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Force</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Allows the cmdlet to overwrite an existing read-only file. Even using the Force parameter, the cmdlet cannot override security restrictions.</Description>
+          <DefaultValue>False</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>NoClobber</Name>
+          <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases>
+            <string>NoOverwrite</string>
+          </Aliases>
+          <Description>Will not overwrite (replace the contents) of an existing file. By default, if a file exists in the specified path, Out-File overwrites the file without warning. If both Append and NoClobber are used, the output is appended to the existing file.</Description>
+          <DefaultValue>Overwrite</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="Int32" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Width</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateRangeAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the number of characters in each line of output. Any additional characters are truncated, not wrapped. If you omit this parameter, the width is determined by the characteristics of the host. The default for the Windows PowerShell console is 80 (characters).</Description>
+          <DefaultValue>80</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be written to the file. Enter a variable that contains the objects or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="true" isPos="false" pos="named" globbing="false">
+          <Name>LiteralPath</Name>
+          <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases>
+            <string>PSPath</string>
+          </Aliases>
+          <Description>Specifies the path to the output file. Unlike FilePath, the value of the LiteralPath parameter is used exactly as it is typed. No characters are interpreted as wildcards. If the path includes escape characters, enclose it in single quotation marks. Single quotation marks tell Windows PowerShell not to interpret any characters as escape sequences.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>WhatIf</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.AliasAttribute</string>
+          </Attributes>
+          <Aliases>
+            <string>wi</string>
+          </Aliases>
+          <Description>Prompts you for confirmation before running the cmdlet.</Description>
+          <DefaultValue>false</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Confirm</Name>
+          <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases>
+            <string>cf</string>
+          </Aliases>
+          <Description>Shows what would happen if the cmdlet runs. The cmdlet is not run.</Description>
+          <DefaultValue>false</DefaultValue>
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Process | Out-File -FilePath C:\Test1\process.txt</Cmd>
+          <Description>This command sends a list of processes on the computer to the Process.txt file. If the file does not exist, Out-File creates it. Because the name of the FilePath parameter is optional, you can omit it and submit the equivalent command "Get-Process | Out-File C:\Test1\process.txt".</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; Get-Process | Out-File C:\Test1\process.txt -NoClobber</Cmd>
+          <Description>This command also sends a list of processes to the Process.txt file, but it uses the NoClobber parameter, which prevents an existing file from being overwritten. The output shows the error message that appears when NoClobber is used with an existing file.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 3</Name>
+          <Cmd>PS C:\&gt; $a = Get-Process
+PS C:\&gt; Out-File -FilePath C:\Test1\process.txt -InputObject $a -Encoding ASCII -Width 50</Cmd>
+          <Description>These commands send a list of processes on the computer to the Process.txt file. The text is encoded in ASCII format so that it can be read by search programs like Findstr and Grep. By default, Out-File uses Unicode format.
+
+The first command gets the list of processes and stores them in the $a variable. The second command uses the Out-File cmdlet to send the list to the Process.txt file.
+
+The command uses the InputObject parameter to specify that the input is in the $a variable. It uses the Encoding parameter to convert the output to ASCII format. It uses the Width parameter to limit each line in the file to 50 characters. Because the lines of output are truncated at 50 characters, the rightmost column in the process table is omitted.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 4</Name>
+          <Cmd>PS C:\&gt; Set-Location HKLM:\Software
+PS C:\&gt; Get-Acl MyCompany\MyKey | Out-File -FilePath C:\PS\Acl.txt
+PS C:\&gt; Get-Acl MyCompany\MyKey | Out-File -FilePath FileSystem::C:\PS\Acl.txt</Cmd>
+          <Description>These commands show how to use the Out-File cmdlet when you are not in a FileSystem drive.
+
+The first command sets the current location to the HKLM:\Software registry key.
+
+The second and third commands have the same effect. They use the Get-Acl cmdlet to get the security descriptor of the MyKey registry subkey (HKLM\Software\MyCompany\MyKey). A pipeline operator passes the result to the Out-File cmdlet, which sends it to the Acl.txt file.
+
+Because Out-File is not supported by the Windows PowerShell Registry provider, you must specify either the file system drive name, such as "C:", or the name of the provider followed by two colons as well as the file system drive name and path, "FileSystem::C:\PS", in the value of the FilePath parameter. The second and third commands demonstrate these methods.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Host</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Null</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Printer</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-String</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Tee-Object</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Out" noun="Host">
+      <Name>Out-Host</Name>
+      <GeneralHelp>
+        <Synopsis>Sends output to the Windows PowerShell host.</Synopsis>
+        <Description>The Out-Host cmdlet sends output to the Windows PowerShell host for display. The native Windows PowerShell host displays the output at the command line. Other Windows PowerShell hosts may behave differently. Because Out-Host is the default, you do not need to specify it unless you want to use its parameters to change the display.</Description>
+        <Notes>The cmdlets that contain the Out verb (the Out cmdlets) do not format objects; they just render them and send them to the specified display destination. If you send an unformatted object to an Out cmdlet, the cmdlet sends it to a formatting cmdlet before rendering it.
+
+The Out cmdlets do not have parameters for names or file paths. To send data to an Out cmdlet, use a pipeline operator (|) to send the output of a Windows PowerShell command to the cmdlet. You can also store data in a variable and use the InputObject parameter to pass the data to the cmdlet. For help, see the examples.
+
+Out-Host sends data, but it does not emit any output objects. If you pipe the output of Out-Host to the Get-Member cmdlet, Get-Member reports that no objects have been specified.</Notes>
+        <InputType>System.Management.Automation.PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Out-Host.</InputTypeDescription>
+        <ReturnType>None</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Out-Host does not generate any output. However, the host might display the objects that Out-Host sends to it.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Paging InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Paging InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Out-Host [-Paging] [-InputObject &lt;PSObject&gt;]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Paging</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Displays one page of output at a time, and waits for user input before displaying the remaining pages, much like the traditional "more" command. By default, all of the output is displayed on a single page. The page size is determined by the characteristics of the host.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects that are written to the console. Enter a variable that contains the objects, or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Process | Out-Host -Paging</Cmd>
+          <Description>This command displays the processes on the system one page at a time. It uses the Get-Process cmdlet to get the processes on the system. The pipeline operator (|) sends the results to Out-Host, which displays them at the console. The Paging parameter displays one page of data at a time.
+
+The same command format is used for the Help function that is built into Windows PowerShell. That function gets data from the Get-Help cmdlet and then uses the Paging parameter of Out-Host to display the data one page at a time by using this command format: Get-Help $Args[0] | Out-Host -Paging.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; $a = Get-History
+PS C:\&gt; Out-Host -InputObject $a</Cmd>
+          <Description>These commands display the session history at the command line. The first command uses the Get-History cmdlet to get the session history, and then it stores the history in the $a variable. The second command uses Out-Host to display the content of the $a variable, and it uses the InputObject parameter to specify the variable to Out-Host.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Clear-Host</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-File</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Null</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Printer</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-String</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Write-Host</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Out" noun="Printer">
+      <Name>Out-Printer</Name>
+      <GeneralHelp>
+        <Synopsis>Sends output to a printer.</Synopsis>
+        <Description>The Out-Printer cmdlet sends output to the default printer or to an alternate printer, if one is specified.</Description>
+        <Notes>You can also refer to Out-Printer by its built-in alias, "lp". For more information, see about_Aliases.
+
+The cmdlets that contain the Out verb (the Out cmdlets) do not format objects; they just render them and send them to the specified display destination. If you send an unformatted object to an Out cmdlet, the cmdlet sends it to a formatting cmdlet before rendering it.
+
+The Out cmdlets do not have parameters for names or file paths. To send data to an Out cmdlet, use a pipeline operator (|) to send the output of a Windows PowerShell command to the cmdlet. You can also store data in a variable and use the InputObject parameter to pass the data to the cmdlet. For more information, see the examples.
+
+Out-Printer sends data, but it does not emit any output objects. If you pipe the output of Out-Printer to Get-Member, Get-Member reports that no objects have been specified.</Notes>
+        <InputType>System.Management.Automation.PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe any object to Out-Printer.</InputTypeDescription>
+        <ReturnType>None</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Out-Printer does not return any objects.</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Name InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Name InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Out-Printer [[-Name] &lt;String&gt;] [-InputObject &lt;PSObject&gt;]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
+          <Name>Name</Name>
+          <Attributes>
+            <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases>
+            <string>PrinterName</string>
+          </Aliases>
+          <Description>Specifies the alternate printer. The parameter name ("Name") is optional.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be sent to the printer. Enter a variable that contains the objects, or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Content $PSHOME\about_signing.help.txt | Out-Printer</Cmd>
+          <Description>This command prints the content of the about_Signing Help topic to the default printer. This example shows you how to print a file, even though Out-Printer does not have a Path parameter.
+
+The command uses the Get-Content cmdlet to get the contents of the Help topic. The path includes $pshome, a built-in variable that stores the installation directory for Windows PowerShell. A pipeline operator (|) passes the results to Out-Printer, which sends it to the default printer.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; 'Hello, World' | Out-Printer -Name '\\Server01\Prt-6B Color'</Cmd>
+          <Description>This command prints "Hello, World" to the "Prt-6B Color" printer on Server01. This command uses the Name parameter to specify the alternate printer. Because the parameter name is optional, you can omit it.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 3</Name>
+          <Cmd>PS C:\&gt; $h = Get-Help -Full Get-WmiObject
+PS C:\&gt; Out-Printer -InputObject $h</Cmd>
+          <Description>These commands print the full version of the Help topic for Get-WmiObject. The first command uses the Get-Help cmdlet to get the full version of the Help topic for Get-WmiObject and stores it in the $h variable. The second command sends the content to the default printer. It uses the InputObject parameter to pass the value of the $h variable to Out-Printer.</Description>
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-File</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Host</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Null</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-String</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
+      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
+      <Publish>false</Publish>
+    </CmdletObject>
+    <CmdletObject verb="Out" noun="String">
+      <Name>Out-String</Name>
+      <GeneralHelp>
+        <Synopsis>Sends objects to the host as a series of strings.</Synopsis>
+        <Description>The Out-String cmdlet converts the objects that Windows PowerShell manages into an array of strings. By default, Out-String accumulates the strings and returns them as a single string, but you can use the stream parameter to direct Out-String to return one string at a time. This cmdlet lets you search and manipulate string output as you would in traditional shells when object manipulation is less convenient.</Description>
+        <Notes>The cmdlets that contain the Out verb (the Out cmdlets) do not format objects; they just render them and send them to the specified display destination. If you send an unformatted object to an Out cmdlet, the cmdlet sends it to a formatting cmdlet before rendering it.
+
+The Out cmdlets do not have parameters that take  names or file paths. To send data to an Out cmdlet, use a pipeline operator (|) to send the output of a Windows PowerShell command to the cmdlet. You can also store data in a variable and use the InputObject parameter to pass the data to the cmdlet. For more information, see the examples.</Notes>
+        <InputType>System.Management.Automation.PSObject</InputType>
+        <InputUrl />
+        <InputTypeDescription>You can pipe objects to Out-String.</InputTypeDescription>
+        <ReturnType>System.String</ReturnType>
+        <ReturnUrl />
+        <ReturnTypeDescription>Out-String returns the string(s) that it creates from the input object(s).</ReturnTypeDescription>
+      </GeneralHelp>
+      <ParamSets>
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Stream Width InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Stream Width InputObject Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer PipelineVariable" />
+      </ParamSets>
+      <Syntax>
+        <string>Out-String [-Stream] [-Width &lt;Int32&gt;] [-InputObject &lt;PSObject&gt;]</string>
+      </Syntax>
+      <Parameters>
+        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Stream</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Sends the strings for each object separately. By default, the strings for each object are accumulated and sent as a single string.
+
+To use the Stream parameter, type "-Stream" or its alias, "ost".</Description>
+          <DefaultValue>Single string</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="Int32" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>Width</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateRangeAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the number of characters in each line of output. Any additional characters are truncated, not wrapped. If you omit this parameter, the width is determined by the characteristics of the host program. The default value for the Windows PowerShell console is 80 (characters).</Description>
+          <DefaultValue>80</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="PSObject" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>InputObject</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specifies the objects to be written to a string. Enter a variable that contains the objects, or type a command or expression that gets the objects.</Description>
+          <DefaultValue />
+        </ParameterDescription>
+      </Parameters>
+      <Examples>
+        <Example>
+          <Name>EXAMPLE 1</Name>
+          <Cmd>PS C:\&gt; Get-Content C:\Test1\Testfile2.txt | Out-String</Cmd>
+          <Description>This command sends the content of the Testfile2.txt file to the console as a single string. It uses the Get-Content cmdlet to get the content of the file. The pipeline operator (|) sends the content to Out-String, which sends the content to the console as a string.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 2</Name>
+          <Cmd>PS C:\&gt; $c = Get-Culture | Select-Object *
+PS C:\&gt; Out-String -InputObject $c -Width 100
+</Cmd>
+          <Description>The first command uses the Get-Culture cmdlet to get the regional settings. The pipeline operator (|) sends the result to the Select-Object cmdlet, which selects all properties (*) of the culture object that Get-Culture returned. The command then stores the results in the $c variable.
+
+The second command uses the Out-String cmdlet to convert the CultureInfo object to a series of strings (one string for each property). It uses the InputObject parameter to pass the $c variable to Out-String. The Width parameter is set to 100 characters per line to prevent truncation.
+
+These commands get the regional settings for the current user and convert the data to strings.</Description>
+        </Example>
+        <Example>
+          <Name>EXAMPLE 3</Name>
+          <Cmd>PS C:\&gt; Get-Alias | Out-String -Stream | Select-String 'Get-Command'</Cmd>
+          <Description />
+        </Example>
+      </Examples>
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Out-Default</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-File</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Host</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Null</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+        <RelatedLink>
+          <LinkText>Out-Printer</LinkText>
+          <LinkUrl />
+        </RelatedLink>
+      </RelatedLinks>
       <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
       <Publish>false</Publish>
     </CmdletObject>

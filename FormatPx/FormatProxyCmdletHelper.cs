@@ -16,7 +16,7 @@ namespace FormatPx
         internal static Type GroupEndData    = Type.GetType("Microsoft.PowerShell.Commands.Internal.Format.GroupEndData,    System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
         internal static Type FormatEndData   = Type.GetType("Microsoft.PowerShell.Commands.Internal.Format.FormatEndData,   System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
-        internal static string notInAGroup = "outsider_group_979d659e-59a9-4554-8499-f782debbfc2b";
+        internal static string notInAGroup = "outside_group_979d659e-59a9-4554-8499-f782debbfc2b";
 
         bool persistWhenOutput = false;
         dynamic format = null;
@@ -24,10 +24,15 @@ namespace FormatPx
         Collection<object> outOfBandFormatData = new Collection<object>();
         Dictionary<string, dynamic> groups = new Dictionary<string, dynamic>(StringComparer.OrdinalIgnoreCase);
 
-        public FormatProxyCmdletHelper(PSCmdlet proxyCmdlet, bool persistWhenOutput)
+        public FormatProxyCmdletHelper(PSCmdlet proxyCmdlet)
             : base(proxyCmdlet)
         {
-            this.persistWhenOutput = persistWhenOutput;
+            // Remove any non-core parameters before invoking the proxy command target
+            if (proxyCmdlet.MyInvocation.BoundParameters.ContainsKey("PersistWhenOutput"))
+            {
+                persistWhenOutput = (SwitchParameter)proxyCmdlet.MyInvocation.BoundParameters["PersistWhenOutput"];
+                proxyCmdlet.MyInvocation.BoundParameters.Remove("PersistWhenOutput");
+            }
         }
 
         public void Begin()

@@ -36,6 +36,20 @@ namespace FormatPx
             steppablePipeline.Begin(acceptsPipelineInput);
         }
 
+        public void ProcessInputObject()
+        {
+            // Look up the current input object
+            PSObject inputObject = null;
+            if (proxyCmdlet.MyInvocation.BoundParameters.ContainsKey("InputObject") &&
+                (proxyCmdlet.MyInvocation.BoundParameters["InputObject"] != null))
+            {
+                inputObject = proxyCmdlet.MyInvocation.BoundParameters["InputObject"] as PSObject;
+            }
+            
+            // Now process the input object
+            Process(inputObject);
+        }
+
         public virtual void Process(PSObject inputObject)
         {
             // If there is no steppable pipeline, return immediately

@@ -57,6 +57,11 @@
     <Compile Include="FormatContainer.cs" />
     <Compile Include="FormatRecord.cs" />
     <Compile Include="OutDefaultCommand.cs" />
+    <Compile Include="OutFileCommand.cs" />
+    <Compile Include="OutHostCommand.cs" />
+    <Compile Include="OutPrinterCommand.cs" />
+    <Compile Include="OutProxyCmdletHelper.cs" />
+    <Compile Include="OutStringCommand.cs" />
     <Compile Include="PowerShellExtensions.cs" />
     <Compile Include="PowerShellInternals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
