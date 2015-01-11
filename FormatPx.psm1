@@ -8,7 +8,7 @@ to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
 capabilities of the formatting engine in PowerShell.
 
-Copyright 2014 Kirk Munro
+Copyright 2015 Kirk Munro
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

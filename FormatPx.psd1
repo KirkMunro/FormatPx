@@ -8,7 +8,7 @@ to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
 capabilities of the formatting engine in PowerShell.
 
-Copyright 2014 Kirk Munro
+Copyright 2015 Kirk Munro
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.0.2.3'
+        ModuleVersion = '1.0.3.4'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -34,7 +34,7 @@ limitations under the License.
 
           CompanyName = 'Poshoholic Studios'
 
-            Copyright = 'Copyright 2014 Kirk Munro'
+            Copyright = 'Copyright 2015 Kirk Munro'
 
           Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.'
 
@@ -56,6 +56,10 @@ limitations under the License.
                         'Format-Table'
                         'Format-Wide'
                         'Out-Default'
+                        'Out-File'
+                        'Out-Host'
+                        'Out-Printer'
+                        'Out-String'
                         )
 
       AliasesToExport = @(
@@ -74,7 +78,7 @@ limitations under the License.
 
           PrivateData = @{
                             PSData = @{
-                                Tags = 'format Format-Table Format-List Format-Wide Format-Custom Format-Default Out-Default'
+                                Tags = 'format Format-Table Format-List Format-Wide Format-Custom Format-Default Out-Default Out-File Out-Host Out-Printer Out-String'
                                 LicenseUri = 'http://apache.org/licenses/LICENSE-2.0.txt'
                                 ProjectUri = 'https://github.com/KirkMunro/FormatPx'
                                 IconUri = ''
