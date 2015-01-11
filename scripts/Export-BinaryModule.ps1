@@ -8,7 +8,7 @@ to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
 capabilities of the formatting engine in PowerShell.
 
-Copyright 2014 Kirk Munro
+Copyright 2015 Kirk Munro
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ limitations under the License.
 #############################################################################>
 
 # Export the cmdlets that are defined in the nested module
-Export-ModuleMember -Cmdlet Format-Custom,Format-Default,Format-List,Format-Table,Format-Wide,Out-Default
+Export-ModuleMember -Cmdlet Format-Custom,Format-Default,Format-List,Format-Table,Format-Wide,Out-Default,Out-File,Out-Host,Out-Printer,Out-String
 
 # Define a fd alias so that using Format-Default is easier.
 if (-not (Get-Alias -Name fd -ErrorAction Ignore)) {
@@ -34,8 +34,8 @@ if (-not (Get-Alias -Name fd -ErrorAction Ignore)) {
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU3TKW+eapx1vPJVCtwu2yHWLF
-# UC2gghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUKzIK9YZqRXCm/wBEg2iwEc6X
+# Nb6gghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -148,23 +148,23 @@ if (-not (Get-Alias -Name fd -ErrorAction Ignore)) {
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFBhf
-# gkPj4D33Wri+2938Mw+zK1JUMA0GCSqGSIb3DQEBAQUABIIBAAHG9yYh8wiXmg2g
-# 1WPnGHWmj+fFCiYmMilNCi7rEgMcwTK96fGwVTAOc8NddsG4z72R6+qaNGdirlwJ
-# +AZtz3i5xMzTifPeRM1eNraHUJCItBUdD9Fx2n+Dsi8b+j9F+Y8EI0fsy939ooVK
-# GpoIW5GCvME4ADtJ3iOsvDK+8M8i4J2/vqZuyXfC2lm74fbOAQJlcWsqiCeKNlQ9
-# WmQa2oOaiHUN1Mz1DuiZMmBmDhU1bUoRhGfTcva7FpyxJP3RlAI89x2GqnAd5kk5
-# RVa7BcORvZdcsrRpVACKe8Blk6J9xxnUAVhW1gd3gg/hhLkLmj3xXl8g6x+G0OcQ
-# 4C1ClMyhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFH26
+# DWqHB4jVjw8Yfha76anIjwugMA0GCSqGSIb3DQEBAQUABIIBALsmnqF5hhHmNSZA
+# bHBUtMJ0dyZdM8XpkwWMX495qbTvclshC62i8GCiWZxkWJJNex5omS7dn6DbfqJ9
+# pIAwGpoPEbKMPWqoCY94LV7QpIPMobE5yPjojECifEV3meejG1ZqAiMW7Ro4aiZ+
+# 3jM373mYU+6bHsmzsSEGScfuefGrSqB/rlbsQPIylyIZsCbqbuHZxcerRzjUIRE1
+# LKhl9kr9JU9TJBnQpRJQO4aDHbFr/M/ANf4Namd7L0sxvUWaZ3SThlojxhtERjhQ
+# NxR3NOLCOdj/B8BoatJ1mSNesLxnymjHGAKT6U4UsIZwNdtmoCkNJUU6BMPH8e9C
+# xTuediyhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTUwMTA5MTkwMDQ1WjAjBgkqhkiG9w0BCQQxFgQUyE08
-# wOfDTMMBQbj8ou6EekOvOYEwDQYJKoZIhvcNAQEBBQAEggEAcv5CuoRX03n97ihk
-# d8c9+jJZqcwocGvITRLtplrarR1ZCPuRjbpNThYPNfiHypK3G5+sFuzO0GmaQfzN
-# B/+Y6vFP26iQOd2EMp9siN51IbMoIPb1IIUAS2aSoa6kbF3mIpyEWNaZvisAJWpb
-# JZ8b1meWuN8GlNmSvZYV1D/FFVdGIl/obe/2+ANHcKEIGPuAf0jpTK+STVdpTFED
-# rq2mKJHwcp3TXwTr5SEZ+tNlCc6omWGRCkLnhGagDOSW4C9waHmE/MtJhlyaXNrL
-# yF7SHxMb+COzZKsT1inPs2LWqT7wpWVOSPZlvhoWI0EV2e1Go2otpriG4+rJM4n8
-# r+MGZg==
+# BgkqhkiG9w0BCQUxDxcNMTUwMTExMTcwOTU2WjAjBgkqhkiG9w0BCQQxFgQUePGt
+# ck5LbgO3U6ftrpS6tDEMNywwDQYJKoZIhvcNAQEBBQAEggEAA6WN1To36Hxrw9b0
+# pHCQWXc2e3TE4WZ0VR6pmLXAT+RCXuhVfAxsvO2WSl1eZeZG903hL2JQQeDuqT9j
+# Po4zuQAHbWqQYtEmHkzdQ2cF6hAalRtVwV4582JARNtbdAM8GQS//gL05z9yJUET
+# 62kNVPWINzszlrZZF3u2T82BUNbU5ITCprkBXKE0hIu2f2dLy/FsM6R+YkuNVZIB
+# 7Tk02lQUMNvYPpomr0Kp8bQDw0ASiYI93CAEYFUQU5nGZbNkNvXbwW573ePhuXs6
+# z7sF0UGQjyWEFKs5Z4hTMHu+doh7EgoLJ5xd9/VRZ2SCzG46RZQF6zc+UPJVMe51
+# HU6uYQ==
 # SIG # End signature block

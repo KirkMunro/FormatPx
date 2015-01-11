@@ -8,7 +8,7 @@ to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
 capabilities of the formatting engine in PowerShell.
 
-Copyright 2014 Kirk Munro
+Copyright 2015 Kirk Munro
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.0.2.3'
+        ModuleVersion = '1.0.3.4'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -34,7 +34,7 @@ limitations under the License.
 
           CompanyName = 'Poshoholic Studios'
 
-            Copyright = 'Copyright 2014 Kirk Munro'
+            Copyright = 'Copyright 2015 Kirk Munro'
 
           Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.'
 
@@ -56,6 +56,10 @@ limitations under the License.
                         'Format-Table'
                         'Format-Wide'
                         'Out-Default'
+                        'Out-File'
+                        'Out-Host'
+                        'Out-Printer'
+                        'Out-String'
                         )
 
       AliasesToExport = @(
@@ -74,7 +78,7 @@ limitations under the License.
 
           PrivateData = @{
                             PSData = @{
-                                Tags = 'format Format-Table Format-List Format-Wide Format-Custom Format-Default Out-Default'
+                                Tags = 'format Format-Table Format-List Format-Wide Format-Custom Format-Default Out-Default Out-File Out-Host Out-Printer Out-String'
                                 LicenseUri = 'http://apache.org/licenses/LICENSE-2.0.txt'
                                 ProjectUri = 'https://github.com/KirkMunro/FormatPx'
                                 IconUri = ''
@@ -85,8 +89,8 @@ limitations under the License.
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUAhNupKQZcQXfH/OGyml97Cvd
-# NUqgghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUNiqgfy8Qy1AlJMpwJsTtLMcf
+# 5iugghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -199,23 +203,23 @@ limitations under the License.
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFIYo
-# uoiMXwJAZ93JwEJ+Hif8s53BMA0GCSqGSIb3DQEBAQUABIIBAANk4yWmHzEadh/m
-# bj4j0zg5GM1XnBpKXVO908tlGOK8xmwsXrbJQwWU9R/AGFQrgxi+kPfRnodBb3Fx
-# h9TBNY2USA6KIDZ5OKO7Iljyjhanv4SfPVq+xFtOLEY1KKZqlA08zU9L5kJWWm0C
-# r+DzF1nec0e6E7PU63CpFq8vh/G+MtOtbuTk6xKt6IRwrC637O8FtkPPanqV683C
-# WxshYlWZntVH+rJnkZ/MtFPfcc15nayl1lzIORRrqUZRh7lEIt33MnUESLixmD+r
-# 8SdwWqSKrZXDf0c5rKgGFDCE/RwAwFg8FtGRB9xUVTFu75fjmNb3Hni7lk5Ma+Xm
-# H0EtBRShggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFECK
+# Ts6N2PEtWgkuno3D0BwTfFe5MA0GCSqGSIb3DQEBAQUABIIBAIv69LlbQ8ZQSTgo
+# oF3LX3mssmCfXEdeHJWgboxOBIsEzdlZ7ZZ6q2rjlAJqxF89RWop6HMUMZHQAbuC
+# FPUKFhppyilWBGMA9gg5SudS4piJmfNx4xfe3fIcWuUSSvkrCmVi6BENjd89MxZj
+# b3CLWtMYCkK750mKpj3Ul3ox+ejYv21NIY9XuQblOBNqW7WDYZ7AMIOyEDYhEt7I
+# d3THmsRJrl/IJxkYVXPVVFCdRkYfg/nj2BOoWKN8AaMcaQBWaqrfm3KaQU9UNwUu
+# hxUjfxD7AKMEKjgjHzSllzkXL6jO4zLGbpKhFxrvmbWMWr79UUGajFKtiN9eqA8i
+# tA+g2oqhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTUwMTA5MTkwMDQ0WjAjBgkqhkiG9w0BCQQxFgQUSLkd
-# lChSGdMdd7+uj+PfRadQaqYwDQYJKoZIhvcNAQEBBQAEggEAfLv9m2PojDU9cCJ1
-# mKFXTHaKg0OJbpGLKt7BlKWaT1hG8nEQCVXnsDd2Em6AffDV/3RWHFz0J6KLWnTR
-# U7/yEP/WXocYhWSXHvEchYCEvdYLcYppgaB4sUdP9d5/9e8g1+icUAl5uFDjnq/z
-# jZk1xIEelxCIsam0XQj6VdShFtXm9rIAiFI+H3s07lJ9OfSmzBYjJzhtoAE+fDgM
-# F+TfCVfgRXFUlNw1d0QqjncWLrNMukxZ3be+vymRJvK2wRjbiDzh588mx4jREDe3
-# 1hUNmAgtAkoBxXRQBR1wtpm2oaY9jvexPKbMOpVx9ieX8R31EOqkxtG8iY9XIw7p
-# bhL1Tg==
+# BgkqhkiG9w0BCQUxDxcNMTUwMTExMTcwOTU2WjAjBgkqhkiG9w0BCQQxFgQUiCuZ
+# 4i7JMUiHQ1SHLxQc/S9xS3swDQYJKoZIhvcNAQEBBQAEggEAadrzI27jkTKRliCt
+# tsM0baoRV/rBNIBhckknl95Gvc1jKSp5A938XKWDrmuShiOCQAKDZMfkHBx4K2oF
+# s+xH/t74Xg6od4VBsi3Ac++rhXUq9lgih9AdFFFiAllNJ2J0faCGj16PY4OGJWp1
+# YvkGN0Afgb6R5WkTgCEVjOJcBK/QlSf7Quuc3ihAIdTSTomLu1528dcHkwb24J8k
+# Jq4DYPVm9M+0REAXeYQUtYk4mBl6ugod/kAmjM1CuRnPD0XdIGRqDGW91llD4kbA
+# o9Y+EmEYJC+Lz+MLF4K9FlshrvmkOinMSgFCJgmBY6mU+rLat01h8u4LOWLn0Tav
+# vuj2eQ==
 # SIG # End signature block
