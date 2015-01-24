@@ -26,7 +26,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.0.3.4'
+        ModuleVersion = '1.0.4.5'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
