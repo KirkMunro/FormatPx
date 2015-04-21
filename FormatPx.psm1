@@ -6,7 +6,9 @@ reduces the usefulness of the Format-* cmdlets, making it harder to work with
 formatting in PowerShell. FormatPx fixes this problem by attaching format data
 to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
-capabilities of the formatting engine in PowerShell.
+capabilities of the formatting engine in PowerShell. FormatPx also removes
+formatting limitations in the output layer, allowing multiple contiguous
+formats returned by a single command to render properly in PowerShell.
 
 Copyright 2015 Kirk Munro
 
@@ -43,38 +45,8 @@ if (Get-Module -Name HistoryPx) {
 
 #endregion
 
-#region Turn on automatically forced formatting for tables, lists, wide, and widelist output.
-
-# This overrides the annoying OutOfBand attribute that is found in view definitions
-# in format ps1xml files. We force the formatting for tables, lists, and wide views
-# because in practice, OutOfBand is only used to customize the custom format output.
-# This approach preserves the default custom view that is rendered when a format
-# command is not used, while allowing users to retrieve other properties on these
-# objects in other views as well.
-
-$standardFormatCommandNames = @(
-    'Format-Table'
-    'Format-List'
-    'Format-Wide'
-)
-foreach ($formatCommandName in $standardFormatCommandNames) {
-    $global:PSDefaultParameterValues["${formatCommandName}:Force"] = $true
-}
-
-#endregion
-
 #region Export commands defined in nested modules.
 
 . $PSModuleRoot\scripts\Export-BinaryModule.ps1
 
 #endregion
-
-$ExecutionContext.SessionState.Module.OnRemove = {
-    #region Remove any changes that this module made to PSDefaultParameterValues.
-
-    foreach ($formatCommandName in $standardFormatCommandNames) {
-        $global:PSDefaultParameterValues.Remove("${formatCommandName}:Force")
-    }
-
-    #endregion
-}

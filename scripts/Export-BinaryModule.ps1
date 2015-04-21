@@ -6,7 +6,9 @@ reduces the usefulness of the Format-* cmdlets, making it harder to work with
 formatting in PowerShell. FormatPx fixes this problem by attaching format data
 to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
-capabilities of the formatting engine in PowerShell.
+capabilities of the formatting engine in PowerShell. FormatPx also removes
+formatting limitations in the output layer, allowing multiple contiguous
+formats returned by a single command to render properly in PowerShell.
 
 Copyright 2015 Kirk Munro
 

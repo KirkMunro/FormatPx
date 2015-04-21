@@ -6,7 +6,9 @@ reduces the usefulness of the Format-* cmdlets, making it harder to work with
 formatting in PowerShell. FormatPx fixes this problem by attaching format data
 to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
-capabilities of the formatting engine in PowerShell.
+capabilities of the formatting engine in PowerShell. FormatPx also removes
+formatting limitations in the output layer, allowing multiple contiguous
+formats returned by a single command to render properly in PowerShell.
 
 Copyright 2015 Kirk Munro
 
@@ -26,7 +28,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.0.4.5'
+        ModuleVersion = '1.1.0.6'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -36,7 +38,7 @@ limitations under the License.
 
             Copyright = 'Copyright 2015 Kirk Munro'
 
-          Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.'
+          Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell. FormatPx also removes formatting limitations in the output layer, allowing multiple contiguous formats returned by a single command to render properly in PowerShell.'
 
     PowerShellVersion = '3.0'
 
