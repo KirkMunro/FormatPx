@@ -28,21 +28,19 @@ namespace FormatPx
                 // Define the steppable pipeline that we want to do the work (make sure you always
                 // add the full command name; otherwise, you risk proxying the wrong command or
                 // getting into an endless loop).
+                List<string> forcedNouns = new List<string>(new string[] { "Table", "List", "Wide" });
                 PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
                 ps.AddCommand(string.Format(@"{0}\{1}", proxyTarget.ModuleName, proxyTarget.Name), false);
-                foreach (string parameterName in initialParameters.Keys.Where(x => string.Compare(x, "Force", false) != 0))
+                bool forcedCommand = (string.Compare(proxyTarget.Verb, "Format", true) == 0) && (forcedNouns.Contains(proxyTarget.Noun, StringComparer.OrdinalIgnoreCase));
+                foreach (string parameterName in initialParameters.Keys.Where(x => !forcedCommand || string.Compare(x, "Force", false) != 0))
                 {
                     ps.AddParameter(parameterName, initialParameters[parameterName]);
                 }
 
                 // Add the Force parameter to Format-Table, Format-List, and Format-Wide calls
-                if (string.Compare(proxyTarget.Verb, "Format", true) == 0)
+                if (forcedCommand)
                 {
-                    List<string> forcedNouns = new List<string>(new string[] { "Table", "List", "Wide" });
-                    if (forcedNouns.Contains(proxyTarget.Noun, StringComparer.OrdinalIgnoreCase))
-                    {
-                        ps.AddParameter("Force", true);
-                    }
+                    ps.AddParameter("Force", true);
                 }
 
                 // Invoke the steppable pipeline
