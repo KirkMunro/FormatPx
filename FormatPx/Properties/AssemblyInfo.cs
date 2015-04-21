@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("FormatPx")]
-[assembly: AssemblyDescription("FormatPx separates the formatting layer from the data layer in PowerShell. By default, PowerShell's native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.")]
+[assembly: AssemblyDescription("FormatPx separates the formatting layer from the data layer in PowerShell. By default, PowerShell's native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell. FormatPx also removes formatting limitations in the output layer, allowing multiple contiguous formats returned by a single command to render properly in PowerShell.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Kirk Munro")]
 [assembly: AssemblyProduct("FormatPx")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.4.5")]
-[assembly: AssemblyFileVersion("1.0.4.5")]
+[assembly: AssemblyVersion("1.1.4.5")]
+[assembly: AssemblyFileVersion("1.1.4.5")]

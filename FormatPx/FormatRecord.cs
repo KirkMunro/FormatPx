@@ -9,13 +9,13 @@ namespace FormatPx
     {
         public bool PersistWhenOutput { get; set; }
 
-        public bool UseDefault { get; set; }
-
         public Collection<FormatEntry> Entry { get; set; }
 
         public FormatContainer Format { get; set; }
 
         public FormatContainer Group { get; set; }
+
+        public bool OutOfBandFormat { get; set; }
 
         public FormatRecord(FormatContainer format, FormatContainer group, Collection<FormatEntry> entry, bool persistWhenOutput)
         {
@@ -24,17 +24,14 @@ namespace FormatPx
             Group = group;
             Entry = entry;
             PersistWhenOutput = persistWhenOutput;
-            UseDefault = false;
+            OutOfBandFormat = false;
         }
 
-        public FormatRecord(bool persistWhenOutput)
+        public FormatRecord(Collection<FormatEntry> outOfBandFormatData)
         {
-            // This constructor is used when the default format is being used
-            Format = null;
-            Group = null;
-            Entry = null;
-            PersistWhenOutput = persistWhenOutput;
-            UseDefault = true;
+            // This constructor is used when out of band formatting is being used
+            Entry = outOfBandFormatData;
+            OutOfBandFormat = true;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Text.RegularExpressions;
 
 namespace FormatPx
 {
@@ -24,30 +25,97 @@ namespace FormatPx
         [Alias("Sticky")]
         public SwitchParameter PersistWhenOutput = false;
 
-        protected override void ProcessRecord()
+        Dictionary<string, PowerShellInternals.DefaultViewHelper> defaultViewMap = new Dictionary<string, PowerShellInternals.DefaultViewHelper>(StringComparer.OrdinalIgnoreCase);
+        PowerShellInternals.DisplayDataQueryHelper displayDataQueryHelper;
+        SteppablePipeline formatPipeline = null;
+        PowerShellInternals.DefaultViewHelper currentView = null;
+
+        protected override void BeginProcessing()
         {
-            // Look up the current input object
-            PSObject inputObject = null;
-            if (MyInvocation.BoundParameters.ContainsKey("InputObject") &&
-                (MyInvocation.BoundParameters["InputObject"] != null))
+            // Create an instance of the DisplayDataQueryHelper class
+            displayDataQueryHelper = this.GetDisplayDataQueryHelper();
+
+            // Let the base class do its work
+            base.BeginProcessing();
+        }
+
+        protected void CloseDefaultFormatPipeline()
+        {
+            // If we were using a default format pipeline, allow it to finish and close it
+            if (formatPipeline != null)
             {
-                inputObject = MyInvocation.BoundParameters["InputObject"] as PSObject;
+                foreach (PSObject item in formatPipeline.End())
+                {
+                    WriteObject(item);
+                }
             }
 
+            currentView = null;
+            formatPipeline = null;
+        }
+
+        protected override void ProcessRecord()
+        {
             // If no input was received, do nothing
-            if (inputObject == null)
+            if (InputObject == null)
             {
                 return;
             }
 
-            // Create the object representing the data record
-            dynamic record = new FormatRecord(PersistWhenOutput.IsPresent);
+            // Get the type hierarchy for the current object and convert it to a joined string
+            string typeHierarchy = string.Join("|", InputObject.TypeNames.Select(x => Regex.Replace(x, @"^Deserialized\.", "")));
 
-            // Add the format record to the input object
-            FormatProxyCmdletHelper.AddFormatRecordToPSObject(inputObject, record, this);
+            // Lookup the default format for the current object type
+            PowerShellInternals.DefaultViewHelper defaultView = null;
+            if (defaultViewMap.ContainsKey(typeHierarchy))
+            {
+                defaultView = defaultViewMap[typeHierarchy];
+            }
+            else
+            {
+                defaultView = displayDataQueryHelper.GetDefaultView(InputObject);
+                defaultViewMap.Add(typeHierarchy, defaultView);
+            }
 
-            // Then write the input object to the pipeline
-            WriteObject(inputObject);
+            // If the default view control is different, close the current steppable pipeline
+            if (currentView != null && currentView != defaultView)
+            {
+                CloseDefaultFormatPipeline();
+            }
+
+            // If the default view control is not set yet, set it and open a steppable pipeline
+            if (currentView == null)
+            {
+                currentView = defaultView;
+                PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                string currentViewType = currentView.GetViewType();
+                string defaultFormatCommand = string.Format("Format-{0}", currentViewType);
+
+                ps.AddCommand(string.Format(@"FormatPx\{0}", defaultFormatCommand), false);
+                formatPipeline = ps.GetSteppablePipeline(this);
+                formatPipeline.Begin(true);
+            }
+
+            // If the default view control is the same, send the object into the steppable pipeline
+            if (currentView != null && currentView == defaultView)
+            {
+                foreach (PSObject item in formatPipeline.Process(InputObject))
+                {
+                    WriteObject(item);
+                }
+            }
+
+            // Let the base class do its work
+            base.ProcessRecord();
+        }
+
+        protected override void EndProcessing()
+        {
+            // Close the helper steppable pipeline if we have one open
+            CloseDefaultFormatPipeline();
+
+            // Let the base class do its work
+            base.EndProcessing();
         }
     }
 }

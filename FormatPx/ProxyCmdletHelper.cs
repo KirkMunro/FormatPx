@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 
@@ -12,28 +13,49 @@ namespace FormatPx
         }
 
         protected PSCmdlet proxyCmdlet = null;
+        Dictionary<string, object> initialParameters = null;
         protected SteppablePipeline steppablePipeline = null;
 
-        public void Begin(bool acceptsPipelineInput)
+        public virtual void OpenSteppablePipeline()
         {
-            // Find the first matching cmdlet after the proxy cmdlet in the prioritized cmdlet order
-            CmdletInfo proxyTarget = proxyCmdlet.InvokeCommand.GetCmdlets(proxyCmdlet.MyInvocation.MyCommand.Name)
-                .SkipWhile(x => x.ImplementingType != proxyCmdlet.GetType())
-                .First(x => x.ImplementingType != proxyCmdlet.GetType());
-
-            // Define the steppable pipeline that we want to do the work (make sure you always
-            // add the full command name; otherwise, you risk proxying the wrong command or
-            // getting into an endless loop).
-            PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
-            ps.AddCommand(string.Format(@"{0}\{1}", proxyTarget.ModuleName, proxyTarget.Name), false);
-            foreach (string parameterName in proxyCmdlet.MyInvocation.BoundParameters.Keys)
+            if (steppablePipeline == null)
             {
-                ps.AddParameter(parameterName, proxyCmdlet.MyInvocation.BoundParameters[parameterName]);
-            }
+                // Find the first matching cmdlet after the proxy cmdlet in the prioritized cmdlet order
+                CmdletInfo proxyTarget = proxyCmdlet.InvokeCommand.GetCmdlets(proxyCmdlet.MyInvocation.MyCommand.Name)
+                    .SkipWhile(x => x.ImplementingType != proxyCmdlet.GetType())
+                    .First(x => x.ImplementingType != proxyCmdlet.GetType());
 
-            // Invoke the steppable pipeline
-            steppablePipeline = ps.GetSteppablePipeline(proxyCmdlet);
-            steppablePipeline.Begin(acceptsPipelineInput);
+                // Define the steppable pipeline that we want to do the work (make sure you always
+                // add the full command name; otherwise, you risk proxying the wrong command or
+                // getting into an endless loop).
+                PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                ps.AddCommand(string.Format(@"{0}\{1}", proxyTarget.ModuleName, proxyTarget.Name), false);
+                foreach (string parameterName in initialParameters.Keys.Where(x => string.Compare(x, "Force", false) != 0))
+                {
+                    ps.AddParameter(parameterName, initialParameters[parameterName]);
+                }
+
+                // Add the Force parameter to Format-Table, Format-List, and Format-Wide calls
+                if (string.Compare(proxyTarget.Verb, "Format", true) == 0)
+                {
+                    List<string> forcedNouns = new List<string>(new string[] { "Table", "List", "Wide" });
+                    if (forcedNouns.Contains(proxyTarget.Noun, StringComparer.OrdinalIgnoreCase))
+                    {
+                        ps.AddParameter("Force", true);
+                    }
+                }
+
+                // Invoke the steppable pipeline
+                steppablePipeline = ps.GetSteppablePipeline(proxyCmdlet);
+                steppablePipeline.Begin(!initialParameters.ContainsKey("InputObject"));
+            }
+        }
+
+        public virtual void Begin()
+        {
+            // Capture the input parameters (these are used for late-opening of
+            // the steppable pipeline)
+            initialParameters = new Dictionary<string, object>(proxyCmdlet.MyInvocation.BoundParameters);
         }
 
         public void ProcessInputObject()
@@ -45,18 +67,21 @@ namespace FormatPx
             {
                 inputObject = proxyCmdlet.MyInvocation.BoundParameters["InputObject"] as PSObject;
             }
-            
-            // Now process the input object
+
+            // If the inputObject is null, return immediately
+            if (inputObject == null)
+            {
+                return;
+            }
+
+            // Process the input object
             Process(inputObject);
         }
 
         public virtual void Process(PSObject inputObject)
         {
-            // If there is no steppable pipeline, return immediately
-            if (steppablePipeline == null)
-            {
-                return;
-            }
+            // If there is no steppable pipeline, open one immediately
+            OpenSteppablePipeline();
 
             // Process the steppable pipeline
             foreach (PSObject item in (inputObject == null ? steppablePipeline.Process() : steppablePipeline.Process(inputObject)))
@@ -65,7 +90,7 @@ namespace FormatPx
             }
         }
 
-        public virtual void End()
+        public virtual void CloseSteppablePipeline()
         {
             // End the processing of the steppable pipeline
             if (steppablePipeline != null)
@@ -75,6 +100,12 @@ namespace FormatPx
                     proxyCmdlet.WriteObject(item);
                 }
             }
+        }
+
+        public virtual void End()
+        {
+            // Close the steppable pipeline
+            CloseSteppablePipeline();
         }
     }
 }
