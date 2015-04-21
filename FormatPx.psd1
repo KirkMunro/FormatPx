@@ -6,7 +6,9 @@ reduces the usefulness of the Format-* cmdlets, making it harder to work with
 formatting in PowerShell. FormatPx fixes this problem by attaching format data
 to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
-capabilities of the formatting engine in PowerShell.
+capabilities of the formatting engine in PowerShell. FormatPx also removes
+formatting limitations in the output layer, allowing multiple contiguous
+formats returned by a single command to render properly in PowerShell.
 
 Copyright 2015 Kirk Munro
 
@@ -26,7 +28,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.0.4.5'
+        ModuleVersion = '1.1.0.6'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -36,7 +38,7 @@ limitations under the License.
 
             Copyright = 'Copyright 2015 Kirk Munro'
 
-          Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell.'
+          Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell. FormatPx also removes formatting limitations in the output layer, allowing multiple contiguous formats returned by a single command to render properly in PowerShell.'
 
     PowerShellVersion = '3.0'
 
@@ -89,8 +91,8 @@ limitations under the License.
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUFTBY2QKJHGES2FQDaEJfrbMk
-# iUagghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU8HIjW0iUY1qpwNZTzd/mwXIa
+# C7ugghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -203,23 +205,23 @@ limitations under the License.
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFOrj
-# GX9/WRfqYrO3TCT16ZJcToM7MA0GCSqGSIb3DQEBAQUABIIBAD8L8wPFCbFmq4YL
-# mIOy0BzPXSdP03WUtFMNaei1Aj2AC2qp8P6lUUjtjcR1WmAIUk/EdDp/h8CWyfeO
-# XBNfugGMERYAo51iYXJGxuVD1N3UOkALOf/9/9tLcYNmcivqKZ+/HGF7n13OaTmp
-# ksqXXfQKlsmibJybU72ZahQ3dC2n7msknkDagueriNROZMborHrMeQipSmleAAbE
-# D1f30V2uCmYPLeMldxxAKxFNaDALdHhKs0/NLYgjeo1GYZH/7l03fDYe0Nul1Y+T
-# +6MpR4aPG62esqM9lYanjFp8TiWk/3I7aideZ2oxJZI73C/eXDmYZ/PafTOaWQqF
-# XTXqzcehggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFGeH
+# 8Bk3smFDf457l3SXhs92ph1cMA0GCSqGSIb3DQEBAQUABIIBAJrCKvDzz1RsbQU4
+# zurk2n4tIR3FfzlwkzHjb7t5zhl0aeU+dvs7Ks+98L8ycLiuoAIrwDkXh/r/yH/d
+# gzpekjAXEi8haKYn25iQb6at6iljcxMsjK40vvkDmC9gSSmnDWhDvkR3ijbE9T+j
+# TRbUcfy5VnqBN/HaKUv7c/lkzgmisY9BsStC/eamdRpF7n60/aj8S40G7bjt/E6y
+# 27bJuFQaAPvRu8rwxt/4LeEMaJRC54he2RmR1N5Nx3IWvoKzYenwVaYQVr/cvSNN
+# 6f0aS337Fm6cPuFDBK5qbCKzKi0YP8VV4di3ztTfKFLn7kh9YYKFpZzPy/WWfUo9
+# idBvkkWhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTUwMTI0MjAxNjQ2WjAjBgkqhkiG9w0BCQQxFgQUA7S9
-# 65UnFY2LaDBX+qfHcJ/GUPwwDQYJKoZIhvcNAQEBBQAEggEAOXXmYOCT5L8bgCk5
-# kF3W+eWmLRovf2kQzucEk2JBRICXAjlmwfEQzi6xB7IKxDMRTif983/6Xx3URtLq
-# kNsSUiC/kXxN0ZmKpgOQ47ezrXvVf5sHpZMdDdBL25qxrodcxU/cVellRguI+M0N
-# FgimeSMJnHFv3ZkWT7tyQ77bH0LBPrjj+Ksk70UJajSIGzP/QHZ7vnSr9E0mMJUo
-# v4GxxmUwC3z+J40kPG6ahsi0QYIxwvhmExWbq7ClV1bsomH4/ACdZQtcWXSS/hh6
-# NLqIpbB8hgVlXVaY7sDmdvBzcD+4oZuWBs5saKHpj3/5hK7tTabEiiijPdBp1yOc
-# whXr9g==
+# BgkqhkiG9w0BCQUxDxcNMTUwNDIxMDIzOTU5WjAjBgkqhkiG9w0BCQQxFgQUWUbF
+# v04iEbBx1I+WFP6+5V1+xMowDQYJKoZIhvcNAQEBBQAEggEAj/niwZmVxchjGamG
+# M5uqV4IdNNfweij4tH1ZuAWi28bmb6wFSd5cY+3u7N+U7GlNldyZwnWh/U0RS3Yw
+# UBhUMOrZ0TjOBnaNmhuNhplvi4p75BECg/58ITpKcLE3C3L00kT423OZOGmStj7c
+# pj5T2nd0AylMolUibcoW4FgDMv9EDYU/p1xbLgZQ1aPTP4ZB7FS1hSyCWBD96LSc
+# b4p+N6HWuzCZuZyoVtNjsMPb3PSkCib88XlIcZByT0Cnes7hyIsfAx8XM5pzIyjp
+# jRN8w6rA9USpxZsZ67CwO3trAtDoOdYy5r8enazoC0YbjZe2gNQekDwC1S5fz33o
+# lfke0A==
 # SIG # End signature block

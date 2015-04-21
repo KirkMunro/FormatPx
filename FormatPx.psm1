@@ -6,7 +6,9 @@ reduces the usefulness of the Format-* cmdlets, making it harder to work with
 formatting in PowerShell. FormatPx fixes this problem by attaching format data
 to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
-capabilities of the formatting engine in PowerShell.
+capabilities of the formatting engine in PowerShell. FormatPx also removes
+formatting limitations in the output layer, allowing multiple contiguous
+formats returned by a single command to render properly in PowerShell.
 
 Copyright 2015 Kirk Munro
 
@@ -43,46 +45,16 @@ if (Get-Module -Name HistoryPx) {
 
 #endregion
 
-#region Turn on automatically forced formatting for tables, lists, wide, and widelist output.
-
-# This overrides the annoying OutOfBand attribute that is found in view definitions
-# in format ps1xml files. We force the formatting for tables, lists, and wide views
-# because in practice, OutOfBand is only used to customize the custom format output.
-# This approach preserves the default custom view that is rendered when a format
-# command is not used, while allowing users to retrieve other properties on these
-# objects in other views as well.
-
-$standardFormatCommandNames = @(
-    'Format-Table'
-    'Format-List'
-    'Format-Wide'
-)
-foreach ($formatCommandName in $standardFormatCommandNames) {
-    $global:PSDefaultParameterValues["${formatCommandName}:Force"] = $true
-}
-
-#endregion
-
 #region Export commands defined in nested modules.
 
 . $PSModuleRoot\scripts\Export-BinaryModule.ps1
 
 #endregion
-
-$ExecutionContext.SessionState.Module.OnRemove = {
-    #region Remove any changes that this module made to PSDefaultParameterValues.
-
-    foreach ($formatCommandName in $standardFormatCommandNames) {
-        $global:PSDefaultParameterValues.Remove("${formatCommandName}:Force")
-    }
-
-    #endregion
-}
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUAcE+2vcg6zynpct+tharo1/G
-# geagghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUqqgdc4gAsDq/drg+DsD/+0NM
+# g0OgghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -195,23 +167,23 @@ $ExecutionContext.SessionState.Module.OnRemove = {
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFMON
-# uXBowv2YMlpGQeosVGJa+N4+MA0GCSqGSIb3DQEBAQUABIIBAChDlySJvTLR6D2X
-# w8YlpRYl0tJSwzRX7Bkk/TJ/U/Hy/YdgIaAe9gGVbL893ZHDeJ+3tNRMy2zHZy+w
-# 4Tc6Qnz/lTjQ3qYxP17oJLxVuo27f1bRbg5Ey8WjEjryW9Z2FfnOOckEbtVvPNIM
-# Ytgov6sRiv/fsJiIMFOBElxkA99A5hOZnmrFFPQwkR5b+o2a+DMQAE+JnXyliTVV
-# lg9+ELmVzvwBbSMyRNDsBRhjz52qq3GC9qlkh3pIYN77+W5RYJKDpAYIE4AkUyXb
-# FeS9voJwjaoTryV7jDUXHIaHbOdjOd+TZGH8WW17rBMMknfZGd1ouWxDL8xBC3zZ
-# lm9b4UmhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFOuF
+# xzusmGCtsk0nNcFJt9DWi7OoMA0GCSqGSIb3DQEBAQUABIIBAJf0Eye0wmm7u7xP
+# WQgWiCVwcS6Jd0ATDjdsbgirOj1dASwtB6G+9kB+n3fRB3iKEUtBqk/8NeLQSIpg
+# T4QbmJFcah1T01ogEbboAgZmvORacJjWWViWeiQyml1GT0Ue/+We5FKPZ48tWki8
+# C2ehatw7mY1ZGNTBqPawwgStWA0poV6F8lVapN3UypA7cxJucIZKrxjoqL7QulkT
+# up/7YR8K4z17B7dEwjOKBeR59iD5FwHJxd51KdkpN1OjsF1a2QYlu+hcs5k2KJjx
+# La92RVB4yg6CmdfFgBwl7qAPh4VfKZbUJWhV74425E/Qnu+Z6L9/p3cFf762Vco6
+# n9zrQumhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTUwMTI0MjAxNjQ2WjAjBgkqhkiG9w0BCQQxFgQUt4gA
-# 0XA0zrRYj4zjHE5aBNB4GSEwDQYJKoZIhvcNAQEBBQAEggEAHmvOr78U3ABygc0v
-# K+bvKr8bajuwsSilt69lHB2kpJq9Qnx+f2V9E+7F2A/QRCVB5hMI/shPXcWiqeTv
-# RW2Wr/c0XAeBFkKHS3ObGuR2n8owPrb0z5CBBGPqb9OlyKfxbHlJnbqQ/nIGjIS+
-# tIKFvrOlJMhXtscXszwO3geU/J1cT7P7f2cBCnVmZotY+LOFGsA7r3lncTrhGADG
-# mtKNQDUeFyCMCOIhkx6ZtLZBugPr7SZ8oK1i8KDI8JAF2TvM8nm22vG8oojC9j/A
-# gjZUNYa1W/DqqkDkj7gDwKwYRHJM6GUObfhLOUR3j1KCy6wP1XHl1pTsj2Qn/D58
-# GszzOQ==
+# BgkqhkiG9w0BCQUxDxcNMTUwNDIxMDI0MDAwWjAjBgkqhkiG9w0BCQQxFgQUHA6h
+# CrdyeyEUegK7Ur2QgLkaFOowDQYJKoZIhvcNAQEBBQAEggEAefWCMaohkRNnostT
+# Z0/FJ86uxOcgxw84UvzJvifOOn6CijIyziXX/bvDfTkU7y6BHfLn3jSdjbg9ow+j
+# OtD9DBLhq8We+Qb7ag2G42TfrDh8Xjvp71il85l8eLLnhmkU7be7qGiNo3tnublQ
+# Xx6hxOPweyIQfEfJwU8Myb1M5NkcLfIL8KAmpWuMSJoE2knoGN/W2fRp7rx18Kwe
+# ynj8kBwon6H8OQu4U6PK4QK6yQEBqN/4DCFHEjh0VFN30le7XV/XLT8Z/pLbCu9V
+# jzSwBAXgzktPJ5hOJmPg+LUSTlwJ7RQnHJqmtGH/spFMKJpvlOwaQXjiNJl8uu4T
+# 8+6Tog==
 # SIG # End signature block

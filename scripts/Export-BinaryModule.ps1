@@ -6,7 +6,9 @@ reduces the usefulness of the Format-* cmdlets, making it harder to work with
 formatting in PowerShell. FormatPx fixes this problem by attaching format data
 to objects rather than replacing objects with format data. This allows for
 data processing to continue beyond Format-* cmdlets, without losing any of the
-capabilities of the formatting engine in PowerShell.
+capabilities of the formatting engine in PowerShell. FormatPx also removes
+formatting limitations in the output layer, allowing multiple contiguous
+formats returned by a single command to render properly in PowerShell.
 
 Copyright 2015 Kirk Munro
 
@@ -34,8 +36,8 @@ if (-not (Get-Alias -Name fd -ErrorAction Ignore)) {
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUKzIK9YZqRXCm/wBEg2iwEc6X
-# Nb6gghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUiZ3Dc4TSW/QYK/qxmWg8ucde
+# q6igghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -148,23 +150,23 @@ if (-not (Get-Alias -Name fd -ErrorAction Ignore)) {
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFH26
-# DWqHB4jVjw8Yfha76anIjwugMA0GCSqGSIb3DQEBAQUABIIBALsmnqF5hhHmNSZA
-# bHBUtMJ0dyZdM8XpkwWMX495qbTvclshC62i8GCiWZxkWJJNex5omS7dn6DbfqJ9
-# pIAwGpoPEbKMPWqoCY94LV7QpIPMobE5yPjojECifEV3meejG1ZqAiMW7Ro4aiZ+
-# 3jM373mYU+6bHsmzsSEGScfuefGrSqB/rlbsQPIylyIZsCbqbuHZxcerRzjUIRE1
-# LKhl9kr9JU9TJBnQpRJQO4aDHbFr/M/ANf4Namd7L0sxvUWaZ3SThlojxhtERjhQ
-# NxR3NOLCOdj/B8BoatJ1mSNesLxnymjHGAKT6U4UsIZwNdtmoCkNJUU6BMPH8e9C
-# xTuediyhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFDvz
+# LG1M+7Tp2OQCX0ObeeTnSZqrMA0GCSqGSIb3DQEBAQUABIIBACIKlp5e4OygzlSG
+# QKg/QSkeI/hsubwhmxsjCVeaF8TANrpq0hGNeD6ZnNEKIAD1UXsObQVTlfKVJX3s
+# jCNfTPaZT5T3xN+TGr/U3npCXxsGhYP0aJLmA6rw1sMEFoA9QDYt7rEqCX3IFi/d
+# h67cB1SbYzKgtE0TCTqnrYL55yeMHq0/E9GRJ/Av1KUKPTsAjCxSWQNaY94jE9vq
+# 3gnEmCNhinE6zXkUYA1+wukZjbKHahaVl1HlWX6YBBLnXS2w1DnWc6ps752qOh7s
+# kMbFLsSKveLNvXvRfvtzsnwYMhPzxepSsIM/02b+EcvbULshGxAzCxqIBNipZ3Gh
+# PvED7luhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTUwMTI0MjAxNjQ2WjAjBgkqhkiG9w0BCQQxFgQUePGt
-# ck5LbgO3U6ftrpS6tDEMNywwDQYJKoZIhvcNAQEBBQAEggEAjzUIk691vX8IoRPw
-# AWRgKXKJxj8JJ+xbMDOwixDs5LYcsD16wVlLoj3I+oi9VEBuwYLiHR0q05PnrCkC
-# ZXOfvrywW0n3jVEOPkYVrmQnP/rKPYm9r7E7HVEeME3vQmS4Yqh4c0tmIvYFX8aD
-# ZuKFuD760Faq+0dcZBTAUQEoYJIXCDlCsH+MGJwWRyzTV6tt7LHb1OaH/jHyJOx8
-# mlsh2l86KLLipHQnTu22JZmWbBsmUxz7DfUjxGPwM+1/4uoIzecRx+nFz2w4ITOJ
-# 7Jn/cDBQkAzVzvYlCtwXd3dUaIhCyT1Kc7yAqWT4KMHylomL5/3BtCtQI80JESBD
-# tvFLhw==
+# BgkqhkiG9w0BCQUxDxcNMTUwNDIxMDI0MDAyWjAjBgkqhkiG9w0BCQQxFgQUErEE
+# 24xNPyi0p77AJL26DnOYXmAwDQYJKoZIhvcNAQEBBQAEggEAHqO9ymlsQEcEOsav
+# hRkP9ZidyddvoHhtd9qAn+1R71hGOo49lJuZhzsGLU7CrnPjCqAEepZEZJuKlMHY
+# eEvvlzkTE/icWN3pbZqKSq06fWZpwlWWP5gDcHHPBNAziOQjB/jp56yKq7SY08CB
+# 5XkaaRzzikCbjsXaNdZtdCg9UQq4Y8dBUD2Mf2Tpe/a0yN/fPmqjfQ0WqijZmOBE
+# 0roIrrOBpfMuEexxreWAF2/GCbZwbIDYH/oehNh+0ahCChr0hO7nWD+c2v/BfmLc
+# VH+RQw2lyO6TafagPkqpF0eVOaVQcpiFYZpIDA1L3p6nqxdo8TrK7wyMF6pliIc3
+# sRpDhw==
 # SIG # End signature block
