@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace FormatPx
 {
@@ -25,28 +24,21 @@ namespace FormatPx
         Collection<object> outOfBandFormatData = new Collection<object>();
         Dictionary<string, dynamic> groups = new Dictionary<string, dynamic>(StringComparer.OrdinalIgnoreCase);
 
-        Dictionary<string, PowerShellInternals.DefaultViewHelper> defaultViewMap = new Dictionary<string, PowerShellInternals.DefaultViewHelper>(StringComparer.OrdinalIgnoreCase);
-        PowerShellInternals.DisplayDataQueryHelper displayDataQueryHelper;
+        ViewFinder viewFinder = null;
         PowerShellInternals.DefaultViewHelper currentView = null;
 
         public FormatProxyCmdletHelper(PSCmdlet proxyCmdlet)
             : base(proxyCmdlet)
         {
+            // Create a new view finder
+            viewFinder = new ViewFinder(proxyCmdlet);
+
             // Remove any non-core parameters before invoking the proxy command target
             if (proxyCmdlet.MyInvocation.BoundParameters.ContainsKey("PersistWhenOutput"))
             {
                 persistWhenOutput = (SwitchParameter)proxyCmdlet.MyInvocation.BoundParameters["PersistWhenOutput"];
                 proxyCmdlet.MyInvocation.BoundParameters.Remove("PersistWhenOutput");
             }
-        }
-
-        public override void Begin()
-        {
-            // Create an instance of the DisplayDataQueryHelper class
-            displayDataQueryHelper = proxyCmdlet.GetDisplayDataQueryHelper();
-
-            // Let the base class do its work
-            base.Begin();
         }
 
         public override void Process(PSObject inputObject)
@@ -69,23 +61,12 @@ namespace FormatPx
             }
             else
             {
-                // Get the type hierarchy for the current object and convert it to a joined string
-                string typeHierarchy = string.Join("|", inputObject.TypeNames.Select(x => Regex.Replace(x, @"^Deserialized\.", "")));
-
-                // Lookup the default format for the current object type
-                if (defaultViewMap.ContainsKey(typeHierarchy))
-                {
-                    defaultView = defaultViewMap[typeHierarchy];
-                }
-                else
-                {
-                    defaultView = displayDataQueryHelper.GetDefaultView(inputObject);
-                    defaultViewMap.Add(typeHierarchy, defaultView);
-                }
+                // Lookup the default view
+                defaultView = viewFinder.GetDefaultView(inputObject);
 
                 // If the default view control is different, close the current steppable pipeline
                 // because the types are not compatible with one another
-                if (currentView != null && currentView != defaultView)
+                if (currentView != null && !currentView.Equals(defaultView))
                 {
                     CloseSteppablePipeline();
                 }
@@ -99,7 +80,7 @@ namespace FormatPx
 
             // If the default view control is the same, send the object into the steppable pipeline
             // or process it as is if it is a scalar
-            if (currentView != null && currentView == defaultView)
+            if (currentView != null && currentView.Equals(defaultView))
             {
                 if (!inputObject.IsScalar() || (proxyCmdlet.MyInvocation.BoundParameters.ContainsKey("Force") && ((SwitchParameter)proxyCmdlet.MyInvocation.BoundParameters["Force"]).IsPresent))
                 {
@@ -135,43 +116,49 @@ namespace FormatPx
                             // Set the default as not belonging to an official group
                             string groupValue = notInAGroup;
                             // Try to look up the group value on the object itself
-                            PSObject propertyPos = item;
-                            PSPropertyInfo propertyInfo = propertyPos.Properties["groupingEntry"];
+                            PSObject psItem = item;
+                            PSPropertyInfo propertyInfo = psItem.Properties["groupingEntry"];
                             if ((propertyInfo != null) && (propertyInfo.Value != null))
                             {
-                                propertyPos = new PSObject(propertyInfo.Value);
-                                propertyInfo = propertyPos.Properties["formatValueList"];
-                                if ((propertyInfo != null) && (propertyInfo.Value != null))
+                                psItem = new PSObject(propertyInfo.Value);
+                                do
                                 {
-                                    MethodInfo toArrayMethod = propertyInfo.Value.GetType().GetMethod("ToArray");
-                                    if (toArrayMethod != null)
+                                    propertyInfo = psItem.Properties["formatValueList"];
+                                    if ((propertyInfo == null) || (propertyInfo.Value == null))
                                     {
-                                        Array collection = (Array)toArrayMethod.Invoke(propertyInfo.Value, null);
-                                        if (collection.Length > 0)
-                                        {
-                                            propertyPos = new PSObject(collection.GetValue(0));
-                                            propertyInfo = propertyPos.Properties["formatValueList"];
-                                            if ((propertyInfo != null) && (propertyInfo.Value != null))
-                                            {
-                                                toArrayMethod = propertyInfo.Value.GetType().GetMethod("ToArray");
-                                                if (toArrayMethod != null)
-                                                {
-                                                    collection = (Array)toArrayMethod.Invoke(propertyInfo.Value, null);
-                                                    if (collection.Length > 1)
-                                                    {
-                                                        propertyPos = new PSObject(collection.GetValue(1));
-                                                        propertyInfo = propertyPos.Properties["propertyValue"];
-                                                        if ((propertyInfo != null) && (propertyInfo.Value != null))
-                                                        {
-                                                            groupValue = propertyInfo.Value as string;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        break;
                                     }
-                                }
+
+                                    MethodInfo toArrayMethod = propertyInfo.Value.GetType().GetMethod("ToArray");
+                                    if (toArrayMethod == null)
+                                    {
+                                        break;
+                                    }
+
+                                    Array collection = (Array)toArrayMethod.Invoke(propertyInfo.Value, null);
+                                    if ((collection == null) || (collection.Length == 0))
+                                    {
+                                        break;
+                                    }
+
+                                    if (collection.Length == 1)
+                                    {
+                                        psItem = new PSObject(collection.GetValue(0));
+                                    }
+                                    else if (collection.Length > 1)
+                                    {
+                                        psItem = new PSObject(collection.GetValue(1));
+                                        propertyInfo = psItem.Properties["propertyValue"];
+                                        if ((propertyInfo == null) || (propertyInfo.Value == null))
+                                        {
+                                            break;
+                                        }
+
+                                        groupValue = propertyInfo.Value as string;
+                                    }
+                                } while (string.Compare(groupValue, notInAGroup, true) == 0);
                             }
+
                             // If the item is still not in a group and GroupBy was used, look harder
                             if ((string.Compare(groupValue, notInAGroup, true) == 0) &&
                                 proxyCmdlet.MyInvocation.BoundParameters.ContainsKey("GroupBy"))
@@ -387,7 +374,7 @@ namespace FormatPx
                 // persist format properly
                 Stack<FormatRecord> formatDataStack = new Stack<FormatRecord>();
                 formatDataStack.Push(record);
-                // Now add the stack to a the input object
+                // Now add the stack to the input object
                 PSNoteProperty formatDataNoteProperty = new PSNoteProperty("__FormatData", formatDataStack);
                 formatDataNoteProperty.Hide(psCmdlet);
                 inputObject.Properties.Add(formatDataNoteProperty);

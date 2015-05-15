@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace FormatPx
 {
@@ -26,15 +25,16 @@ namespace FormatPx
         dynamic format = null;
         dynamic group = null;
 
-        Dictionary<string, PowerShellInternals.DefaultViewHelper> defaultViewMap = new Dictionary<string, PowerShellInternals.DefaultViewHelper>(StringComparer.OrdinalIgnoreCase);
-
         SteppablePipeline formatPipeline = null;
+
+        ViewFinder viewFinder = null;
         PowerShellInternals.DefaultViewHelper currentView = null;
-        PowerShellInternals.DisplayDataQueryHelper displayDataQueryHelper;
 
         public OutProxyCmdletHelper(PSCmdlet proxyCmdlet)
             : base(proxyCmdlet)
         {
+            // Create a new view finder
+            viewFinder = new ViewFinder(proxyCmdlet);
         }
 
         public override void Begin()
@@ -42,9 +42,6 @@ namespace FormatPx
             // Reset the format helper variables
             format = null;
             group = null;
-
-            // Create an instance of the DisplayDataQueryHelper class
-            displayDataQueryHelper = proxyCmdlet.GetDisplayDataQueryHelper();
 
             // Let the base class do its work
             base.Begin();
@@ -189,7 +186,7 @@ namespace FormatPx
                 // Otherwise, process the format data
                 if (record.Group != null)
                 {
-                    if ((group != null) && (group != record.Group))
+                    if ((group != null) && (!group.Equals(record.Group)))
                     {
                         // If we have a new group, process the current group's end object
                         ProcessObject(group.End);
@@ -198,7 +195,7 @@ namespace FormatPx
                 }
                 if (record.Format != null)
                 {
-                    if ((format != null) && (format != record.Format))
+                    if ((format != null) && (!format.Equals(record.Format)))
                     {
                         // If we have a new format, process the current format's end object
                         ProcessObject(format.End);
@@ -239,23 +236,11 @@ namespace FormatPx
 
         private void ProcessUnformattedObject(PSObject inputObject)
         {
-            // Get the type hierarchy for the current object and convert it to a joined string
-            string typeHierarchy = string.Join("|", inputObject.TypeNames.Select(x => Regex.Replace(x, @"^Deserialized\.", "")));
-
             // Lookup the default format for the current object type
-            PowerShellInternals.DefaultViewHelper defaultView = null;
-            if (defaultViewMap.ContainsKey(typeHierarchy))
-            {
-                defaultView = defaultViewMap[typeHierarchy];
-            }
-            else
-            {
-                defaultView = displayDataQueryHelper.GetDefaultView(inputObject);
-                defaultViewMap.Add(typeHierarchy, defaultView);
-            }
+            PowerShellInternals.DefaultViewHelper defaultView = viewFinder.GetDefaultView(inputObject);
 
             // If the default view control is different, close the current steppable pipeline
-            if (currentView != null && currentView != defaultView)
+            if (currentView != null && !currentView.Equals(defaultView))
             {
                 CloseDefaultFormatPipeline();
             }
@@ -271,8 +256,12 @@ namespace FormatPx
                     string currentViewType = currentView.GetViewType();
                     string defaultFormatCommand = string.Format("Format-{0}", currentViewType);
                     ps.AddCommand(string.Format(@"FormatPx\{0}", defaultFormatCommand), false);
+                    if (initialParameters.ContainsKey("InputObject"))
+                    {
+                        ps.AddParameter("InputObject", inputObject);
+                    }
                     formatPipeline = ps.GetSteppablePipeline(proxyCmdlet);
-                    formatPipeline.Begin(true);
+                    formatPipeline.Begin(!initialParameters.ContainsKey("InputObject"));
                 }
                 else
                 {
@@ -281,11 +270,11 @@ namespace FormatPx
             }
 
             // If the default view control is the same, send the object into the steppable pipeline
-            if (currentView != null && currentView == defaultView)
+            if (currentView != null && currentView.Equals(defaultView))
             {
                 if (!inputObject.IsScalar())
                 {
-                    foreach (PSObject item in formatPipeline.Process(inputObject))
+                    foreach (PSObject item in (initialParameters.ContainsKey("InputObject") ? formatPipeline.Process() : formatPipeline.Process(inputObject)))
                     {
                         Process(item, true);
                     }

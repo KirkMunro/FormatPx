@@ -25,15 +25,20 @@ namespace FormatPx
         [Alias("Sticky")]
         public SwitchParameter PersistWhenOutput = false;
 
-        Dictionary<string, PowerShellInternals.DefaultViewHelper> defaultViewMap = new Dictionary<string, PowerShellInternals.DefaultViewHelper>(StringComparer.OrdinalIgnoreCase);
-        PowerShellInternals.DisplayDataQueryHelper displayDataQueryHelper;
+        ViewFinder viewFinder = null;
+
+        Dictionary<string, object> initialParameters = null;
         SteppablePipeline formatPipeline = null;
         PowerShellInternals.DefaultViewHelper currentView = null;
 
         protected override void BeginProcessing()
         {
-            // Create an instance of the DisplayDataQueryHelper class
-            displayDataQueryHelper = this.GetDisplayDataQueryHelper();
+            // Create a new view finder
+            viewFinder = new ViewFinder(this);
+
+            // Capture the input parameters (these are used for late-opening of
+            // the steppable pipeline)
+            initialParameters = new Dictionary<string, object>(MyInvocation.BoundParameters);
 
             // Let the base class do its work
             base.BeginProcessing();
@@ -62,23 +67,11 @@ namespace FormatPx
                 return;
             }
 
-            // Get the type hierarchy for the current object and convert it to a joined string
-            string typeHierarchy = string.Join("|", InputObject.TypeNames.Select(x => Regex.Replace(x, @"^Deserialized\.", "")));
-
             // Lookup the default format for the current object type
-            PowerShellInternals.DefaultViewHelper defaultView = null;
-            if (defaultViewMap.ContainsKey(typeHierarchy))
-            {
-                defaultView = defaultViewMap[typeHierarchy];
-            }
-            else
-            {
-                defaultView = displayDataQueryHelper.GetDefaultView(InputObject);
-                defaultViewMap.Add(typeHierarchy, defaultView);
-            }
+            PowerShellInternals.DefaultViewHelper defaultView = viewFinder.GetDefaultView(InputObject);
 
             // If the default view control is different, close the current steppable pipeline
-            if (currentView != null && currentView != defaultView)
+            if (currentView != null && !currentView.Equals(defaultView))
             {
                 CloseDefaultFormatPipeline();
             }
@@ -90,16 +83,19 @@ namespace FormatPx
                 PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
                 string currentViewType = currentView.GetViewType();
                 string defaultFormatCommand = string.Format("Format-{0}", currentViewType);
-
                 ps.AddCommand(string.Format(@"FormatPx\{0}", defaultFormatCommand), false);
+                foreach (string parameterName in initialParameters.Keys)
+                {
+                    ps.AddParameter(parameterName, initialParameters[parameterName]);
+                }
                 formatPipeline = ps.GetSteppablePipeline(this);
-                formatPipeline.Begin(true);
+                formatPipeline.Begin(!initialParameters.ContainsKey("InputObject"));
             }
 
             // If the default view control is the same, send the object into the steppable pipeline
-            if (currentView != null && currentView == defaultView)
+            if (currentView != null && currentView.Equals(defaultView))
             {
-                foreach (PSObject item in formatPipeline.Process(InputObject))
+                foreach (PSObject item in (initialParameters.ContainsKey("InputObject") ? formatPipeline.Process() : formatPipeline.Process(InputObject)))
                 {
                     WriteObject(item);
                 }

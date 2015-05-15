@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -143,6 +145,8 @@ namespace FormatPx
             {
                 this.psObject = psObject;
                 signature = psObject.TypeNames.Count == 0 ? psObject.GetType().FullName : Regex.Replace(psObject.TypeNames[0], @"^Deserialized\.", "");
+                ViewTypeNames = new List<string>();
+                ViewTypeNames.Add(signature);
                 if (!psObject.IsScalar())
                 {
                     defaultDisplayPropertySet = psObject.GetDefaultDisplayPropertySet();
@@ -159,16 +163,24 @@ namespace FormatPx
                 {
                     signature = string.Format("{0}|{1}", signature, psObject.ToString());
                 }
+                
+
             }
 
-            internal DefaultViewHelper(object defaultView, bool outOfBandView)
+            internal DefaultViewHelper(List<string> viewTypeNames, object defaultView, bool outOfBandView)
             {
+                ViewTypeIdentifier = viewTypeNames.FirstOrDefault();
+                ViewTypeNames = viewTypeNames.Skip(1).ToList();
                 this.defaultView = defaultView;
                 this.outOfBandView = outOfBandView;
                 var mainControlField = defaultView.GetType().GetField("mainControl", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 var mainControl = mainControlField.GetValue(defaultView);
                 mainControlType = mainControl.GetType();
             }
+
+            internal string ViewTypeIdentifier { get; set; }
+
+            internal List<string> ViewTypeNames { get; set; }
 
             internal string GetViewType()
             {
@@ -227,6 +239,11 @@ namespace FormatPx
                 {
                     return false;
                 }
+                return Equals(defaultViewHelper);
+            }
+
+            public bool Equals(DefaultViewHelper defaultViewHelper)
+            {
                 return GetHashCode() == defaultViewHelper.GetHashCode();
             }
         }
@@ -235,14 +252,24 @@ namespace FormatPx
         {
             object expressionFactory = null;
             object typeInfoDataBase = null;
+            MethodInfo getAllApplicableTypesMethod = null;
             MethodInfo getDefaultViewMethod = null;
             MethodInfo getOutOfBandViewMethod = null;
+
+            FieldInfo appliesToField = null;
+            FieldInfo referenceListField = null;
+            FieldInfo nameField = null;
 
             internal DisplayDataQueryHelper(PSCmdlet psCmdlet)
             {
                 Assembly smaAssembly = typeof(PowerShell).Assembly;
 
                 Type mshExpressionFactoryType = smaAssembly.GetType("Microsoft.PowerShell.Commands.Internal.Format.MshExpressionFactory");
+                Type displayDataQueryType = smaAssembly.GetType("Microsoft.PowerShell.Commands.Internal.Format.DisplayDataQuery");
+                Type viewDefinitionType = smaAssembly.GetType("Microsoft.PowerShell.Commands.Internal.Format.ViewDefinition");
+                Type appliesToType = smaAssembly.GetType("Microsoft.PowerShell.Commands.Internal.Format.AppliesTo");
+                Type typeOrGroupReference = smaAssembly.GetType("Microsoft.PowerShell.Commands.Internal.Format.TypeOrGroupReference");
+
                 var mshExpressionFactoryConstructor = mshExpressionFactoryType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
                 expressionFactory = mshExpressionFactoryConstructor.Invoke(null);
 
@@ -252,9 +279,13 @@ namespace FormatPx
                 var formatDBManager = formatDBManagerProperty.GetValue(context);
                 var getTypeInfoDatabaseMethod = formatDBManager.GetType().GetMethod("GetTypeInfoDataBase", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
                 typeInfoDataBase = getTypeInfoDatabaseMethod.Invoke(formatDBManager, null);
-                Type displayDataQueryType = smaAssembly.GetType("Microsoft.PowerShell.Commands.Internal.Format.DisplayDataQuery");
+                getAllApplicableTypesMethod = displayDataQueryType.GetMethod("GetAllApplicableTypes", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeInfoDataBase.GetType(), appliesToType }, null);
                 getDefaultViewMethod = displayDataQueryType.GetMethod("GetDefaultView", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { expressionFactory.GetType(), typeInfoDataBase.GetType(), typeof(Collection<string>) }, null);
                 getOutOfBandViewMethod = displayDataQueryType.GetMethod("GetOutOfBandView", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { expressionFactory.GetType(), typeInfoDataBase.GetType(), typeof(Collection<string>) }, null);
+
+                appliesToField = viewDefinitionType.GetField("appliesTo", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                referenceListField = appliesToType.GetField("referenceList", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                nameField = typeOrGroupReference.GetField("name", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             }
 
             public DefaultViewHelper GetDefaultView(PSObject psObject)
@@ -273,16 +304,40 @@ namespace FormatPx
                 }
                 if (defaultView != null)
                 {
-                    return new DefaultViewHelper(defaultView, outOfBandView);
+                    List<string> viewTypeNames = new List<string>();
+                    viewTypeNames.Add(psObject.TypeNames[0]);
+
+                    List<string> actualViewTypeNames = new List<string>();
+                    var appliesTo = appliesToField.GetValue(defaultView);
+                    var expandedAppliesTo = getAllApplicableTypesMethod.Invoke(null, new object[] { typeInfoDataBase, appliesTo });
+                    foreach (var appliesToEntry in new object[] { appliesTo, expandedAppliesTo })
+                    {
+                        if (appliesToEntry != null)
+                        {
+                            dynamic referenceList = referenceListField.GetValue(appliesToEntry);
+                            if (referenceList != null)
+                            {
+                                foreach (var referenceItem in referenceList)
+                                {
+                                    string name = (string)nameField.GetValue(referenceItem);
+                                    if (!string.IsNullOrEmpty(name) && !actualViewTypeNames.Contains(name))
+                                    {
+                                        actualViewTypeNames.Add(name);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (actualViewTypeNames != null && actualViewTypeNames.Count > 0)
+                    {
+                        viewTypeNames = actualViewTypeNames;
+                    }
+
+                    return new DefaultViewHelper(viewTypeNames, defaultView, outOfBandView);
                 }
 
                 return new DefaultViewHelper(psObject);
             }
-        }
-
-        internal static DisplayDataQueryHelper GetDisplayDataQueryHelper(this PSCmdlet psCmdlet)
-        {
-            return new DisplayDataQueryHelper(psCmdlet);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Text.RegularExpressions;
 
 namespace FormatPx
 {
@@ -13,7 +14,7 @@ namespace FormatPx
         }
 
         protected PSCmdlet proxyCmdlet = null;
-        Dictionary<string, object> initialParameters = null;
+        protected Dictionary<string, object> initialParameters = null;
         protected SteppablePipeline steppablePipeline = null;
 
         public virtual void OpenSteppablePipeline()
