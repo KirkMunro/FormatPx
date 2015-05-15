@@ -28,7 +28,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.1.1.10'
+        ModuleVersion = '1.1.1.11'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -43,7 +43,8 @@ limitations under the License.
     PowerShellVersion = '3.0'
 
       RequiredModules = @(
-                        'Microsoft.PowerShell.Utility'
+                        # This is required but it must be commented out to be able to upload/download FormatPx to/from the PowerShell Gallery
+                        # 'Microsoft.PowerShell.Utility'
                         )
 
         NestedModules = @(
@@ -91,8 +92,8 @@ limitations under the License.
 # SIG # Begin signature block
 # MIIZIAYJKoZIhvcNAQcCoIIZETCCGQ0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU69d2VvjUfGxQvrVMOc2nR1AH
-# tiOgghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU0fvaad4j3v2pSKRHZTbFQocV
+# MKugghRWMIID7jCCA1egAwIBAgIQfpPr+3zGTlnqS5p31Ab8OzANBgkqhkiG9w0B
 # AQUFADCBizELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTEUMBIG
 # A1UEBxMLRHVyYmFudmlsbGUxDzANBgNVBAoTBlRoYXd0ZTEdMBsGA1UECxMUVGhh
 # d3RlIENlcnRpZmljYXRpb24xHzAdBgNVBAMTFlRoYXd0ZSBUaW1lc3RhbXBpbmcg
@@ -205,23 +206,23 @@ limitations under the License.
 # aWdpY2VydC5jb20xLjAsBgNVBAMTJURpZ2lDZXJ0IEFzc3VyZWQgSUQgQ29kZSBT
 # aWduaW5nIENBLTECEA3/99JYTi+N6amVWfXCcCMwCQYFKw4DAhoFAKB4MBgGCisG
 # AQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFKG5
-# brXMeYtRaqG18v1ixyVkNS5VMA0GCSqGSIb3DQEBAQUABIIBAEcVgceJIAmzIgzf
-# 4h7q43Xax/AoQTNglVL8z4ehJeNp3tay+zoI2u5tZN/m1bpjO7p44Q+V3crIRYHD
-# 9N87hRaUmZsr2j1egaZE2s3cSBfYSsP0VbYwcRwOwiHI6koNRve0vMnNxrbslL5f
-# 445x7QZlNC8oQmlhAmSWruSOciJh9ZZw04mmMePmj8QEybq/1qd8VjrILjmS2qGJ
-# 90Ubud5ETbeovrpHX8GK0hU+yCecnqmtAce4fRRHyvQdusAdNbK6kr9kXemccqnK
-# 3G8YBAdqxh/5FVAJjx0buhr+PrpKsM9f+zf8BOHKALQpWIo0co5wS1McC+REvjne
-# dwS7CKihggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFCK9
+# ftpuQRcFTpT0fHhBayAbkDMsMA0GCSqGSIb3DQEBAQUABIIBAIhpOUmuCyCmx7MS
+# TOFeshYDIPqIKC1tQi7Ikpln4r0NmQWUU6onCKfHFzpa1efPgK8E0VZ6Vomye4Mt
+# QNLTRxe+X12G0iLiN6wHug1/tqSqNKfB4RK2VYFx9J8vJRxPw5pzKLNVJk/Z/3ED
+# WT3FczLighiIswZuSEFRXTctnfVFsY1ODG0IuPHjKJe9LuG78t1noceCpY6AiGAe
+# nbtg/YxfA/uhlwRiublflUGYnXaxjntyAtJ1OO035oPsJEV6oQzX44u62/2PifDu
+# /cB5BDWVtiDCEwOJu7zPA/q2+ANgGvTL8ZL1Meb3B4ymdkzB6lJ8L72iNAbqHXJo
+# nHegVdmhggILMIICBwYJKoZIhvcNAQkGMYIB+DCCAfQCAQEwcjBeMQswCQYDVQQG
 # EwJVUzEdMBsGA1UEChMUU3ltYW50ZWMgQ29ycG9yYXRpb24xMDAuBgNVBAMTJ1N5
 # bWFudGVjIFRpbWUgU3RhbXBpbmcgU2VydmljZXMgQ0EgLSBHMgIQDs/0OMj+vzVu
 # BNhqmBsaUDAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTUwNTE1MTYwNzEyWjAjBgkqhkiG9w0BCQQxFgQUuEF4
-# dW3Kj6y46wx403eejfH++6owDQYJKoZIhvcNAQEBBQAEggEAdNQtb/+ib6nsUjDB
-# rOAuv9ihuZrKj2JEuuwFzIR6hn8+vzQ5sq1f7/VAbGOThOrUiqOynsYIagkpj8eQ
-# VvdPrO+U0C2ll7aXzQ8Ojmz6RfWgyZhghKqSKS6vHkdPzE8TUTgohkrRVB5mLx7A
-# u5jdHleaenBrbtpXWgb4Foj1joA4uLBtJb9dhHPjr22BQ2f7fgoDr+JYrjpP5auA
-# RtSRu1AeBqWZBcYrmqtBTkn+yw7Oj64/6r3kFGd0pHeGSO58PeWl7t4f3vwGn5I3
-# 1Cjoh9uMPY2EySyLQiMyVqtNIAwa7C/9XPB8tyktjjs3b32ZE82D0aCN+1Qq4nZM
-# esXEJQ==
+# BgkqhkiG9w0BCQUxDxcNMTUwNTE1MTk0ODI2WjAjBgkqhkiG9w0BCQQxFgQUgfEt
+# QWNxd3QYZBvGqy/HILmDu28wDQYJKoZIhvcNAQEBBQAEggEAPrj+HoBd/eB78uwQ
+# nEewFI99YCkYhuoLJSgpedOqoZXrYrxycVDdBUDu51ioDoRye7Wh8352LzXjU08+
+# e8bGPuum8PxJU53E9y+GLANwpslVk0LCiUZvJJwrjdgLiR26FxAdRCrhe39USD3k
+# yj5KvrrpwSJOdrnAfh/ledhwzAwfBzMFZjRaZhjoy4cuuDCrnGdsfPOZMl6izsFx
+# hpoeXH+ZScHT9hIYq0xZaPC1V7ltUsMiZCnG6IQ5a9PDNc6et8FNd4Be37LniaI+
+# 9ScBApzP4Ieha7j9HgO2k8tO4yTb33iI2wxlog67FaDZ869ZR0Ym9Y8hKoq4NNoi
+# wlQETw==
 # SIG # End signature block
