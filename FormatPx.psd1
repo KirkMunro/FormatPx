@@ -28,7 +28,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.1.1.10'
+        ModuleVersion = '1.1.1.11'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -43,7 +43,8 @@ limitations under the License.
     PowerShellVersion = '3.0'
 
       RequiredModules = @(
-                        'Microsoft.PowerShell.Utility'
+                        # This is required but it must be commented out to be able to upload/download FormatPx to/from the PowerShell Gallery
+                        # 'Microsoft.PowerShell.Utility'
                         )
 
         NestedModules = @(
