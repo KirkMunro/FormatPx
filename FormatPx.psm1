@@ -25,6 +25,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #############################################################################>
 
+#region Set up a module scope trap statement so that terminating errors actually terminate.
+
+trap {throw $_}
+
+#endregion
+
 #region Initialize the module.
 
 Invoke-Snippet -Name Module.Initialize
