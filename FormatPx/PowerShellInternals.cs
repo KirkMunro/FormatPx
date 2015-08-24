@@ -61,7 +61,7 @@ namespace FormatPx
                 else
                 {
                     // Now hide the PSNoteProperty
-                    isHiddenProperty.SetValue(psNoteProperty, true);
+                    isHiddenProperty.SetValue(psNoteProperty, true, null);
                 }
             }
             else
@@ -98,7 +98,7 @@ namespace FormatPx
                 else
                 {
                     // Now get the hidden flag value
-                    return (bool)isHiddenProperty.GetValue(psMemberInfo);
+                    return (bool)isHiddenProperty.GetValue(psMemberInfo, null);
                 }
             }
             else
@@ -119,7 +119,7 @@ namespace FormatPx
                 return null;
             }
 
-            return (PSMemberSet)psStandardMembersProperty.GetValue(psObject);
+            return (PSMemberSet)psStandardMembersProperty.GetValue(psObject, null);
         }
 
         internal static PSPropertySet GetDefaultDisplayPropertySet(this PSObject psObject)
@@ -274,9 +274,9 @@ namespace FormatPx
                 expressionFactory = mshExpressionFactoryConstructor.Invoke(null);
 
                 var contextProperty = psCmdlet.GetType().GetProperty("Context", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                var context = contextProperty.GetValue(psCmdlet);
+                var context = contextProperty.GetValue(psCmdlet, null);
                 var formatDBManagerProperty = context.GetType().GetProperty("FormatDBManager", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                var formatDBManager = formatDBManagerProperty.GetValue(context);
+                var formatDBManager = formatDBManagerProperty.GetValue(context, null);
                 var getTypeInfoDatabaseMethod = formatDBManager.GetType().GetMethod("GetTypeInfoDataBase", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
                 typeInfoDataBase = getTypeInfoDatabaseMethod.Invoke(formatDBManager, null);
                 getAllApplicableTypesMethod = displayDataQueryType.GetMethod("GetAllApplicableTypes", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeInfoDataBase.GetType(), appliesToType }, null);
