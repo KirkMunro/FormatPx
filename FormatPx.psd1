@@ -10,7 +10,7 @@ capabilities of the formatting engine in PowerShell. FormatPx also removes
 formatting limitations in the output layer, allowing multiple contiguous
 formats returned by a single command to render properly in PowerShell.
 
-Copyright 2015 Kirk Munro
+Copyright 2016 Kirk Munro
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ limitations under the License.
 @{
       ModuleToProcess = 'FormatPx.psm1'
 
-        ModuleVersion = '1.1.2.12'
+        ModuleVersion = '1.1.3.14'
 
                  GUID = 'caba4410-d4b8-4f84-bb28-4391ed908cc2'
 
@@ -36,15 +36,14 @@ limitations under the License.
 
           CompanyName = 'Poshoholic Studios'
 
-            Copyright = 'Copyright 2015 Kirk Munro'
+            Copyright = 'Copyright 2016 Kirk Munro'
 
           Description = 'FormatPx separates the formatting layer from the data processing layer in PowerShell. By default, PowerShell''s native Format-* cmdlets convert data objects into format objects when are then rendered in the console. This reduces the usefulness of the Format-* cmdlets, making it harder to work with formatting in PowerShell. FormatPx fixes this problem by attaching format data to objects rather than replacing objects with format data. This allows for data processing to continue beyond Format-* cmdlets, without losing any of the capabilities of the formatting engine in PowerShell. FormatPx also removes formatting limitations in the output layer, allowing multiple contiguous formats returned by a single command to render properly in PowerShell.'
 
     PowerShellVersion = '3.0'
 
       RequiredModules = @(
-                        # This is required but it must be commented out to be able to upload/download FormatPx to/from the PowerShell Gallery
-                        # 'Microsoft.PowerShell.Utility'
+                        'Microsoft.PowerShell.Utility'
                         )
 
         NestedModules = @(
@@ -81,11 +80,14 @@ limitations under the License.
 
           PrivateData = @{
                             PSData = @{
+                                ExternalModuleDependencies = @(
+                                    'Microsoft.PowerShell.Utility'
+                                )
                                 Tags = 'format Format-Table Format-List Format-Wide Format-Custom Format-Default Out-Default Out-File Out-Host Out-Printer Out-String'
                                 LicenseUri = 'http://apache.org/licenses/LICENSE-2.0.txt'
                                 ProjectUri = 'https://github.com/KirkMunro/FormatPx'
                                 IconUri = ''
                                 ReleaseNotes = 'This module will not automatically load by invoking a Format-* command because the native, core Format-* cmdlets are loaded first in PowerShell. To start using FormatPx, you should explicitly import the module either at the command line or as part of your profile by invoking "Import-Module FormatPx".'
-                            }
+                           }
                         }
 }
