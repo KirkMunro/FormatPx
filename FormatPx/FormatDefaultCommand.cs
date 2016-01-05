@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Management.Automation;
-using System.Text.RegularExpressions;
 
 namespace FormatPx
 {
@@ -77,27 +74,40 @@ namespace FormatPx
             }
 
             // If the default view control is not set yet, set it and open a steppable pipeline
+            // if the object is not a scalar
             if (currentView == null)
             {
                 currentView = defaultView;
-                PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
                 string currentViewType = currentView.GetViewType();
-                string defaultFormatCommand = string.Format("Format-{0}", currentViewType);
-                ps.AddCommand(string.Format(@"FormatPx\{0}", defaultFormatCommand), false);
-                foreach (string parameterName in initialParameters.Keys)
+                if (string.Compare(currentViewType, "Scalar") != 0)
                 {
-                    ps.AddParameter(parameterName, initialParameters[parameterName]);
+                    PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    string defaultFormatCommand = string.Format("Format-{0}", currentViewType);
+                    ps.AddCommand(string.Format(@"FormatPx\{0}", defaultFormatCommand), false);
+                    foreach (string parameterName in initialParameters.Keys)
+                    {
+                        ps.AddParameter(parameterName, initialParameters[parameterName]);
+                    }
+                    formatPipeline = ps.GetSteppablePipeline(this);
+                    formatPipeline.Begin(!initialParameters.ContainsKey("InputObject"));
                 }
-                formatPipeline = ps.GetSteppablePipeline(this);
-                formatPipeline.Begin(!initialParameters.ContainsKey("InputObject"));
             }
 
-            // If the default view control is the same, send the object into the steppable pipeline
+            // If the default view control is the same, send the object into the steppable pipeline,
+            // unless it is a scalar
             if (currentView != null && currentView.Equals(defaultView))
             {
-                foreach (PSObject item in (initialParameters.ContainsKey("InputObject") ? formatPipeline.Process() : formatPipeline.Process(InputObject)))
+                if (formatPipeline != null)
                 {
-                    WriteObject(item);
+                    foreach (PSObject item in (initialParameters.ContainsKey("InputObject") ? formatPipeline.Process() : formatPipeline.Process(InputObject)))
+                    {
+                        WriteObject(item);
+                    }
+                }
+                else
+                {
+                    InputObject.Properties.Remove("__FormatData");
+                    WriteObject(InputObject);
                 }
             }
 

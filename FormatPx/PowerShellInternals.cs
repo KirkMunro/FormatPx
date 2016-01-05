@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -206,6 +206,11 @@ namespace FormatPx
                     if (psObject.IsScalar())
                     {
                         return "Scalar";
+                    }
+
+                    if (psObject.BaseObject is IDictionary)
+                    {
+                        return "Table";
                     }
 
                     PSPropertySet defaultDisplayPropertySet = psObject.GetDefaultDisplayPropertySet();
