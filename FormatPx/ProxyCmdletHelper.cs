@@ -23,7 +23,14 @@ namespace FormatPx
                 // Find the first matching cmdlet after the proxy cmdlet in the prioritized cmdlet order
                 CmdletInfo proxyTarget = proxyCmdlet.InvokeCommand.GetCmdlets(proxyCmdlet.MyInvocation.MyCommand.Name)
                     .SkipWhile(x => x.ImplementingType != proxyCmdlet.GetType())
-                    .First(x => x.ImplementingType != proxyCmdlet.GetType());
+                    .FirstOrDefault(x => x.ImplementingType != proxyCmdlet.GetType());
+                // If we can't find the command, raise an exception
+                if (proxyTarget == null)
+                {
+                    // This can happen if someone loads the binary module directly, without the manifest (which sets up
+                    // module dependencies properly -- the manifest is an absolute requirement)
+                    throw new CommandNotFoundException(string.Format("Unexpected error: unable to find proxy cmdlet target with name '{0}'.", proxyCmdlet.MyInvocation.MyCommand.Name));
+                }
 
                 // Define the steppable pipeline that we want to do the work (make sure you always
                 // add the full command name; otherwise, you risk proxying the wrong command or
